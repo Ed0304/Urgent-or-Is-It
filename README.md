@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Urgent or Is It?
 
-## Getting Started
+### An Educational Cybersecurity Awareness Game — A Spiritual Successor to *Phish or Miss*
 
-First, run the development server:
+# FuturePura
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+FuturePura, an alternate universe of our world, is in danger from a master scammer named **Deceivious**.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+What makes Deceivious terrifying is that he is just a *human* — no extraordinary powers, no supernatural abilities. His greatest weapon is something far more familiar: **urgency and fear**.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+He uses them to manipulate his victims and extort money from them before they have a chance to stop and think.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Luckily, the world is not without hope.
 
-## Learn More
+A fellowship of strangers. A group of *"nobodies"* who have come together to stand against Deceivious and his evil plot.
 
-To learn more about Next.js, take a look at the following resources:
+They are...
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Step Back
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Life gets faster. People want certainty. Scammers want you to **act now**.
 
-## Deploy on Vercel
+But Step Back's mission is simple:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Don't act out of fear just because everything sounds urgent.**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Take a moment. Question it. Verify it. **Step Back.**
+
+Join Step Back and stop Deceivious' evil plan.
