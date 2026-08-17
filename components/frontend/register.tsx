@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 export default function Register() {
     return (
@@ -144,7 +145,26 @@ export default function Register() {
                         </button>
 
                     </form>
+                    <div
+                        className="
+                            mt-8
+                            flex
+                            flex-col
+                            items-center
+                            gap-3
+                            text-base
+                            md:text-lg
+                        "
+                    >
+                        <Link
+                            href="/login"
+                            className="hover:underline"
+                        >
+                            Been here before? Click here to sign in.
+                        </Link>
                 </div>
+                </div>
+                
 
                 {/* WHY EMAIL? */}
                 <section className="
