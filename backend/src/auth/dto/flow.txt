@@ -1,0 +1,11 @@
+POST /auth/register
+        │
+        ▼
+   Controller
+        │
+        │ registerDto
+        ▼
+    AuthService
+        │
+        ▼
+   return result

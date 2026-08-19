@@ -1,0 +1,12 @@
+users.module.ts
+       │
+       │ registers
+       ▼
+   User Model
+       │
+       │ injected into
+       ▼
+users.service.ts
+       │
+       ▼
+ MongoDB queries
