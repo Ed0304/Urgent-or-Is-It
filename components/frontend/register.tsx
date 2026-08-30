@@ -93,11 +93,11 @@ export default function Register() {
                             const data = await response.json();
 
                             if (response.ok) {
-                                router.push("/login")
                                 setFlashMessage({
                                     messageType: "success",
                                     messageContent: "Registration Successful. Enter your credentials again to login."
                                 })
+                                router.push("/login")
                             }else{
                                 setFlashMessage({
                                     messageType: "error",

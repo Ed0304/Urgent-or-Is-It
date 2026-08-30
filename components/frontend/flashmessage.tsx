@@ -25,8 +25,32 @@ export default function FlashMessage() {
     }
 
     return (
-        <div>
+    <div
+        className={`
+            fixed
+            right-6
+            top-24
+            z-50
+            max-w-sm
+            rounded-xl
+            border-2
+            bg-white
+            px-5
+            py-4
+            shadow-xl
+            dark:bg-zinc-900
+            ${
+                flashMessage.messageType === "success"
+                    ? "border-green-500"
+                    : flashMessage.messageType === "error"
+                    ? "border-red-500"
+                    : "border-yellow-500"
+            }
+        `}
+    >
+        <p className="font-semibold">
             {flashMessage.messageContent}
-        </div>
-    );
+        </p>
+    </div>
+);
 }
