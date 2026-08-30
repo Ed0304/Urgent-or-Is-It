@@ -3,13 +3,22 @@
 import Link from "next/link";
 import { useState } from "react";
 import { X, Menu } from "lucide-react";
+import { useAuth } from "./AuthContext";
+type HeaderProps = {
+    isLoggedIn: boolean;
+};
+
 
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const {isLoggedIn, logout} = useAuth()
+
 
     const closeMobileMenu = () => {
         setMobileMenuOpen(false);
     };
+
+    
 
     return (
         <header
@@ -79,30 +88,47 @@ export default function Header() {
                 </button>
 
                 {/* Desktop navigation */}
-                <nav
-                    className="
-                        hidden
-                        items-center
-                        gap-8
-                        text-sm
-                        font-medium
-                        lg:flex
-                    "
-                >
-                    <Link
-                        href="/login"
-                        className="transition-opacity hover:opacity-60"
+                {!isLoggedIn && (
+                    <nav
+                        className="
+                            hidden
+                            items-center
+                            gap-8
+                            text-sm
+                            font-medium
+                            lg:flex
+                        "
                     >
-                        Login
-                    </Link>
+                        <Link href="/login"
+                        className="transition-opacity hover:opacity-60">
+                            Login
+                        </Link>
 
-                    <Link
-                        href="/register"
-                        className="transition-opacity hover:opacity-60"
+                        <Link href="/register"
+                        className="transition-opacity hover:opacity-60">
+                            Register
+                        </Link>
+                    </nav>
+                )}
+
+                {isLoggedIn && (
+                    <nav
+                        className="
+                            hidden
+                            items-center
+                            gap-8
+                            text-sm
+                            font-medium
+                            lg:flex
+                        "
                     >
-                        Register
-                    </Link>
-                </nav>
+                        <button onClick={() => logout()}
+                        className="transition-opacity hover:opacity-60">
+                            Logout
+                        </button>
+                    </nav>
+                )}
+
             </div>
 
             {/* Mobile navigation */}
@@ -117,52 +143,35 @@ export default function Header() {
                         lg:hidden
                     "
                 >
+                    {!isLoggedIn && (
                     <div
-                        className="
-                            mx-auto
-                            flex
-                            max-w-7xl
-                            flex-col
-                            gap-1
-                            px-4
-                            py-4
-                            sm:px-6
-                        "
-                    >
-                        <Link
-                            href="/login"
-                            onClick={closeMobileMenu}
-                            className="
-                                rounded-lg
-                                px-4
-                                py-3
-                                text-base
-                                font-medium
-                                transition
-                                hover:bg-zinc-100
-                                dark:hover:bg-zinc-800
-                            "
-                        >
+                    className=" mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6 ">
+                        <Link href="/login" onClick={closeMobileMenu}
+                        className=" rounded-lg px-4 py-3 text-base font-medium transition hover:bg-zinc-100 dark:hover:bg-zinc-800 ">
                             Login
                         </Link>
 
-                        <Link
-                            href="/register"
-                            onClick={closeMobileMenu}
-                            className="
-                                rounded-lg
-                                px-4
-                                py-3
-                                text-base
-                                font-medium
-                                transition
-                                hover:bg-zinc-100
-                                dark:hover:bg-zinc-800
-                            "
-                        >
+                        <Link href="/register" onClick={closeMobileMenu}
+                        className=" rounded-lg px-4 py-3 text-base font-medium transition hover:bg-zinc-100 dark:hover:bg-zinc-800 ">
                             Register
                         </Link>
                     </div>
+                )}
+
+                {isLoggedIn && (
+                    <div
+                    className=" mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6 ">
+                        <button
+                            onClick={() => {
+                                logout();
+                                closeMobileMenu();
+                            }}
+                        >
+                            Logout
+                        </button>
+                    </div>
+                )}
+                    
                 </nav>
             )}
         </header>

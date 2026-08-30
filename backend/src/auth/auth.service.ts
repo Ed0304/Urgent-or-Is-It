@@ -24,7 +24,9 @@ export class AuthService {
         const user = await this.usersService.create(
             registerDto.username,
             registerDto.email,
-            passwordHash
+            passwordHash,
+            0, //Default values for new user
+            [] 
         );
 
          return {

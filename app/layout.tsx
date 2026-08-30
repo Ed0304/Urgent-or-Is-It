@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/frontend/header";
 import GoToTop from "@/components/frontend/GoToTop";
+import AuthWrapper from "@/components/frontend/AuthWrapper";
+import FlashMessage from "@/components/frontend/flashmessage";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,8 +30,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       
       <body className="min-h-full flex flex-col">
         <GoToTop/>
-        <Header/>
-        {children}
+        <AuthWrapper>
+          <FlashMessage />
+          {children}
+      </AuthWrapper>
       </body>
     </html>
     </>

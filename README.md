@@ -27,3 +27,13 @@ But Step Back's mission is simple:
 Take a moment. Question it. Verify it. **Step Back.**
 
 Join Step Back and stop Deceivious' evil plan.
+
+
+## Third-Party Libraries
+
+### zxcvbn-ts
+
+This project uses [zxcvbn-ts](https://github.com/zxcvbn-ts/zxcvbn)
+for password guessability estimation.
+
+zxcvbn-ts is licensed under the MIT License.

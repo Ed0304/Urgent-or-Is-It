@@ -17,6 +17,12 @@ export class User{
 
     @Prop({ required: true })
     passwordHash!: string;
+
+    @Prop({ required: true, default : 0})
+    highScore!: number
+
+    @Prop({ required: true, default: () => [] })
+    storyLevelsCompleted!: number[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -1,7 +1,43 @@
 "use client";
 import Link from "next/link";
+import { validatePasswordFunction, getPasswordScore } from "@/utils/passwordValidation"
+import { useState } from "react";
+import { useAuth } from "./AuthContext";
+import { useRouter } from "next/navigation";
+
+function showStrengthMessage(score:number): string{
+    switch(score){
+        case 0:
+            return "Your password is at risk of being cracked";
+            
+        case 1: 
+            return "Your password is STILL at risk of being cracked";
+        
+        case 2:
+            return "Strengthen your password to minimize your risk";
+
+        case 3:
+            return "Your password is strong enough";
+
+        case 4:
+            return "Great job, you are practicing good security hygiene";
+
+        default:
+            return "Please enter a strong password."
+
+    }
+}
+
+
 
 export default function Register() {
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("")
+    const [passwordError, setPasswordError] = useState("")
+    const [passwordScore, setPasswordScore] = useState<number | null>(null);
+    const router = useRouter();
+    const { setIsLoggedIn, setFlashMessage,flashMessage } = useAuth();
     return (
         <main className="min-h-screen px-6 py-16">
             <div className="mx-auto max-w-2xl">
@@ -31,7 +67,49 @@ export default function Register() {
                     md:p-10
                 ">
 
-                    <form className="space-y-6">
+                    <form
+                        onSubmit={ async (event) => {
+                            event.preventDefault();
+
+                            if (!validatePasswordFunction(password)) {
+                               setPasswordError("Password does not meet the requirements.")
+                               return;
+                            }
+                            setPasswordError("")
+                            const response = await fetch("http://localhost:3001/auth/register",
+                                {
+                                    method:"POST",
+                                    headers:{
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({
+                                        username,
+                                        email,
+                                        password,
+                                    })
+                                }
+                            )
+
+                            const data = await response.json();
+
+                            if (response.ok) {
+                                router.push("/login")
+                                setFlashMessage({
+                                    messageType: "success",
+                                    messageContent: "Registration Successful. Enter your credentials again to login."
+                                })
+                            }else{
+                                setFlashMessage({
+                                    messageType: "error",
+                                    messageContent: "An error occured. Please try again."
+                                })
+                            }
+                            
+
+                            
+                        }}
+                        className="space-y-6"
+                    >
 
                         {/* USERNAME */}
                         <div className="space-y-2">
@@ -58,6 +136,7 @@ export default function Register() {
                                     focus:ring-2
                                 "
                                 placeholder="Choose your username"
+                                onChange={(e) => setUsername(e.target.value)}
                             />
                         </div>
 
@@ -86,6 +165,7 @@ export default function Register() {
                                     focus:ring-2
                                 "
                                 placeholder="you@example.com"
+                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
 
@@ -114,6 +194,14 @@ export default function Register() {
                                     focus:ring-2
                                 "
                                 placeholder="Enter a strong password"
+                                value={password}
+                                onChange={(e) => {
+                                    const newPassword = e.target.value;
+
+                                    setPassword(newPassword);
+                                    setPasswordScore(getPasswordScore(newPassword));
+                                }}
+
                             />
 
                             <p className="
@@ -123,6 +211,17 @@ export default function Register() {
                             ">
                                 Don't create something Deceivious can easily guess.
                             </p>
+                            {passwordError && (
+                                <p className="text-sm">
+                                    {passwordError}
+                                </p>
+                            )}
+                            {passwordScore !== null && (
+                                <p className="text-sm">
+                                {showStrengthMessage(passwordScore)}
+                                </p>
+                            )}
+
                         </div>
 
                         {/* SUBMIT */}

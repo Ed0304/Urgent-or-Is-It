@@ -1,8 +1,36 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { useAuth } from "./AuthContext";
+import { useRouter } from "next/navigation";
+
+export async function getProfile(token:string) {
+    const response = await fetch("http://localhost:3001/auth/profile",
+        {
+            method:"GET",
+            headers:{
+                Authorization: `Bearer ${token}`
+            }
+        }
+    )
+    const data = await response.json();
+
+    return {
+        ok: response.ok,
+        data,
+    };
+    
+}
 
 export default function Login() {
+    const [username,setUsername] = useState("")
+    const [password,setPassword] = useState("")
+    const [passwordError, setPasswordError] = useState("")
+    const { setIsLoggedIn, setFlashMessage,flashMessage } = useAuth();
+
+    const router = useRouter()
+    
     return (
         <main className="min-h-screen px-6 py-16">
             <div className="mx-auto max-w-2xl">
@@ -47,25 +75,64 @@ export default function Login() {
                         md:p-10
                     "
                 >
-                    <form className="space-y-6">
+                    <form className="space-y-6"
+                        onSubmit={ async (event) => {
+                                event.preventDefault();
+                                setPasswordError("")
 
-                        {/* EMAIL */}
+                                const response = await fetch("http://localhost:3001/auth/login",
+                                    {
+                                        method:'POST',
+                                        headers:{
+                                        "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({
+                                            username,
+                                            password,
+                                        }),
+                                        
+                                    });
+
+                                    const data = await response.json();
+                                    if (response.ok) {
+                                        setIsLoggedIn(true);
+                                        const profile = await getProfile(data.access_token);
+                                        console.log(profile);
+                                        if (response.ok){
+                                            localStorage.setItem("access_token",data.access_token)
+                                            setFlashMessage({
+                                                messageType: "success",
+                                                messageContent: "Login Successful. Welcome back."
+                                            })
+                                            router.push("/")   
+                                        }
+                                        else{
+                                            setFlashMessage({
+                                                messageType: "error",
+                                                messageContent: "An error occured. Please try again."
+                                            })
+                                        }
+                                        return data;
+                                    }
+                            
+                            
+                            }
+                        }
+                    >
+
+                        {/* USERNAME */}
                         <div className="space-y-2">
                             <label
-                                htmlFor="email"
-                                className="
-                                    block
-                                    text-lg
-                                    font-semibold
-                                "
+                                htmlFor="username"
+                                className="block text-sm font-semibold"
                             >
-                                Email
+                                Username
                             </label>
 
                             <input
-                                id="email"
-                                name="email"
-                                type="email"
+                                id="username"
+                                name="username"
+                                type="text"
                                 required
                                 className="
                                     w-full
@@ -73,12 +140,12 @@ export default function Login() {
                                     border-2
                                     px-4
                                     py-3
-                                    text-lg
                                     outline-none
                                     transition
                                     focus:ring-2
                                 "
-                                placeholder="Enter your email"
+                                placeholder="Choose your username"
+                                onChange={(e) => setUsername(e.target.value)}
                             />
                         </div>
 
@@ -112,6 +179,12 @@ export default function Login() {
                                     focus:ring-2
                                 "
                                 placeholder="Enter your password"
+                                onChange={(e) => {
+                                        const newPassword = e.target.value;
+                                
+                                        setPassword(newPassword);
+                                                                        
+                                    }}
                             />
                         </div>
 
