@@ -38,6 +38,17 @@ export function validatePasswordFunction(password: string): boolean {
     );
 }
 
+export function getPasswordRequirements(password: string) {
+    return {
+        minimumLength: hasMinimumLength(password),
+        lowercase: hasLowercase(password),
+        uppercase: hasUppercase(password),
+        number: hasNumber(password),
+        specialSymbol: hasSpecialSymbol(password),
+    };
+}
+
+
 export function getPasswordScore(password: string): number {
     const result = zxcvbn.check(password)
     return result.score

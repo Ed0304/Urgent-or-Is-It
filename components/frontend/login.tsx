@@ -27,7 +27,7 @@ export default function Login() {
     const [username,setUsername] = useState("")
     const [password,setPassword] = useState("")
     const [passwordError, setPasswordError] = useState("")
-    const { setIsLoggedIn, setFlashMessage,flashMessage } = useAuth();
+    const { setIsLoggedIn, setFlashMessage,flashMessage,setUser } = useAuth();
 
     const router = useRouter()
     
@@ -97,6 +97,7 @@ export default function Login() {
                                     if (response.ok) {
                                         setIsLoggedIn(true);
                                         const profile = await getProfile(data.access_token);
+                                        setUser(profile.data);
                                         console.log(profile);
                                         if (response.ok){
                                             localStorage.setItem("access_token",data.access_token)
@@ -210,7 +211,7 @@ export default function Login() {
 
                     </form>
 
-                    {/* RECOVERY */}
+                {/*TODO : RECOVERY OPTIONS
                     <div
                         className="
                             mt-8
@@ -235,8 +236,8 @@ export default function Login() {
                         >
                             Forgot Username?
                         </Link>
-                    </div>
-                </div>
+                    </div> */}
+                </div> 
 
                 {/* REGISTER */}
                 <div

@@ -12,6 +12,7 @@ type HeaderProps = {
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const {isLoggedIn, logout} = useAuth()
+    
 
 
     const closeMobileMenu = () => {
@@ -122,6 +123,10 @@ export default function Header() {
                             lg:flex
                         "
                     >
+                        <Link href="/userProfile" 
+                        className="transition-opacity hover:opacity-60">
+                            Profile Settings
+                        </Link>
                         <button onClick={() => logout()}
                         className="transition-opacity hover:opacity-60">
                             Logout
@@ -161,6 +166,10 @@ export default function Header() {
                 {isLoggedIn && (
                     <div
                     className=" mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6 ">
+                        <Link href="/userProfile" onClick={closeMobileMenu}
+                        className=" rounded-lg px-4 py-3 text-base font-medium transition hover:bg-zinc-100 dark:hover:bg-zinc-800 ">
+                            Profile Settings
+                        </Link>
                         <button
                             onClick={() => {
                                 logout();

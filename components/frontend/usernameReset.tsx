@@ -1,6 +1,6 @@
 "use client"
 import Link from 'next/link'
-
+//This username reset page is for when a user can't login.
 export default function ResetUsername(){
     return(
     <>

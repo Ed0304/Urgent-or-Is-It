@@ -15,6 +15,10 @@ export class UsersService {
         private userModel: Model<UserDocument>
     ) {}
 
+    async findById(userId:String): Promise<UserDocument|null>{
+        return this.userModel.findOne(userId);
+    }
+
     async findByUsername(username:string): Promise<UserDocument|null> {
         return this.userModel.findOne({ username }).exec()
     }

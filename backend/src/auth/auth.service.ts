@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -55,6 +55,7 @@ export class AuthService {
         const payload = {
             sub: user._id.toString(),
             username: user.username,
+            email : user.email
         };
 
         const accessToken = await this.jwtService.signAsync(payload);
@@ -63,5 +64,27 @@ export class AuthService {
             message: 'Login successful',
             access_token: accessToken,
         };
+    }
+    async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+    ) {
+        // find user
+        const user = await this.usersService.findById(userId);
+
+        if (!user){
+            throw new UnauthorizedException()
+        }
+
+
+        // bcrypt.compare()
+        const passwordMatches = bcrypt.compare(currentPassword,user.passwordHash)
+        if(!passwordMatches){
+            throw new UnauthorizedException("Invalid current password")
+        }
+        // bcrypt.hash()
+        const newPasswordHash = bcrypt.hash(newPassword,10)
+        // update passwordHash
     }
 }

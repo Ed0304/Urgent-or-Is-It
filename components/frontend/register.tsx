@@ -1,6 +1,10 @@
 "use client";
 import Link from "next/link";
-import { validatePasswordFunction, getPasswordScore } from "@/utils/passwordValidation"
+import {
+    validatePasswordFunction,
+    getPasswordScore,
+    getPasswordRequirements,
+} from "@/utils/passwordValidation";
 import { useState } from "react";
 import { useAuth } from "./AuthContext";
 import { useRouter } from "next/navigation";
@@ -38,6 +42,8 @@ export default function Register() {
     const [passwordScore, setPasswordScore] = useState<number | null>(null);
     const router = useRouter();
     const { setIsLoggedIn, setFlashMessage,flashMessage } = useAuth();
+    const passwordRequirements =
+    getPasswordRequirements(password);
     return (
         <main className="min-h-screen px-6 py-16">
             <div className="mx-auto max-w-2xl">
@@ -203,6 +209,84 @@ export default function Register() {
                                 }}
 
                             />
+                            {/* Password Requirements */}
+                            <div
+                                className="
+                                    grid
+                                    grid-cols-1
+                                    gap-1
+                                    pt-2
+                                    text-sm
+                                    sm:grid-cols-2
+                                "
+                            >
+
+                                <p
+                                    className={
+                                        passwordRequirements.minimumLength
+                                            ? "text-green-400"
+                                            : "text-zinc-400"
+                                    }
+                                >
+                                    {passwordRequirements.minimumLength
+                                        ? "✓"
+                                        : "○"}{" "}
+                                    At least 8 characters
+                                </p>
+
+                                <p
+                                    className={
+                                        passwordRequirements.lowercase
+                                            ? "text-green-400"
+                                            : "text-zinc-400"
+                                    }
+                                >
+                                    {passwordRequirements.lowercase
+                                        ? "✓"
+                                        : "○"}{" "}
+                                    Lowercase letter
+                                </p>
+
+                                <p
+                                    className={
+                                        passwordRequirements.uppercase
+                                            ? "text-green-400"
+                                            : "text-zinc-400"
+                                    }
+                                >
+                                    {passwordRequirements.uppercase
+                                        ? "✓"
+                                        : "○"}{" "}
+                                    Uppercase letter
+                                </p>
+
+                                <p
+                                    className={
+                                        passwordRequirements.number
+                                            ? "text-green-400"
+                                            : "text-zinc-400"
+                                    }
+                                >
+                                    {passwordRequirements.number
+                                        ? "✓"
+                                        : "○"}{" "}
+                                    Number
+                                </p>
+
+                                <p
+                                    className={
+                                        passwordRequirements.specialSymbol
+                                            ? "text-green-400"
+                                            : "text-zinc-400"
+                                    }
+                                >
+                                    {passwordRequirements.specialSymbol
+                                        ? "✓"
+                                        : "○"}{" "}
+                                    Special character
+                                </p>
+
+                            </div>
 
                             <p className="
                                 text-sm
@@ -217,8 +301,16 @@ export default function Register() {
                                 </p>
                             )}
                             {passwordScore !== null && (
-                                <p className="text-sm">
-                                {showStrengthMessage(passwordScore)}
+                                <p
+                                    className={`text-sm ${
+                                        passwordScore <= 1
+                                            ? "text-red-400"
+                                            : passwordScore === 2
+                                                ? "text-yellow-400"
+                                                : "text-green-400"
+                                    }`}
+                                >
+                                    {showStrengthMessage(passwordScore)}
                                 </p>
                             )}
 

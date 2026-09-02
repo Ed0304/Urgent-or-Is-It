@@ -28,17 +28,25 @@ export default function FlashMessage() {
     <div
         className={`
             fixed
-            right-6
-            top-24
-            z-50
-            max-w-sm
+            top-4
+            left-4
+            right-4
+            z-[100]
             rounded-xl
             border-2
-            bg-white
+            border-zinc-700
+            bg-zinc-900
             px-5
             py-4
+            text-center
+            text-white
             shadow-xl
-            dark:bg-zinc-900
+
+            sm:left-1/2
+            sm:right-auto
+            sm:w-[90%]
+            sm:max-w-lg
+            sm:-translate-x-1/2
             ${
                 flashMessage.messageType === "success"
                     ? "border-green-500"

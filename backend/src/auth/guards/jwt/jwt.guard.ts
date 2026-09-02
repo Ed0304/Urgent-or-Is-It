@@ -30,6 +30,7 @@ export class JwtGuard implements CanActivate {
 
         return true;
     } catch {
+        console.log(Error);
         return false;
     }
 

@@ -1,6 +1,6 @@
 "use client"
 import Link from 'next/link'
-
+//This password reset page is for when a user can't login.
 export default function ResetPassword(){
     return(
     <>

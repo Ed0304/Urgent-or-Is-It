@@ -4,7 +4,8 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { UseGuards } from '@nestjs/common';
 import { JwtGuard } from './guards/jwt/jwt.guard';
-import { Get, Req } from '@nestjs/common';
+import { Get, Req, Patch } from '@nestjs/common';
+import { ChangePasswordDto } from './dto/change-password.dto';
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService){}
@@ -26,5 +27,18 @@ export class AuthController {
     @UseGuards(JwtGuard)
     profile(@Req() request: any) {
         return request.user;
+    }
+
+    @Patch('password')
+    @UseGuards(JwtGuard)
+    changePassword(
+        @Req() request: any,
+        @Body() changePasswordDto: ChangePasswordDto,
+    ){
+    return this.authService.changePassword(
+        request.user.sub,
+        changePasswordDto.currentPassword,
+        changePasswordDto.newPassword,
+    );
     }
 }
