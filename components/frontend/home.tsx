@@ -3,13 +3,119 @@
 import { motion } from "motion/react";
 import Register from "./register";
 import Link from "next/link";
-
+import { useAuth } from "./AuthContext";
 
 export default function Home() {
+    const {user,isLoggedIn} = useAuth()
     return (
         <>
-            {/* TITLE */}
-            <motion.h1
+
+        {isLoggedIn ? (
+            <main className="min-h-screen px-6 py-16">
+                <div className="mx-auto flex min-h-[70vh] max-w-5xl flex-col justify-center">
+
+                    {/* Welcome */}
+                    <div className="text-center">
+                        <h1 className="text-5xl font-extrabold tracking-tight md:text-6xl lg:text-7xl">
+                            Welcome back
+                        </h1>
+
+                        <p className="mt-4 text-2xl font-bold text-zinc-300 md:text-3xl">
+                            {user?.username}
+                        </p>
+
+                        <p className="mt-4 text-lg text-zinc-400 md:text-xl">
+                            Ready to continue your investigation?
+                        </p>
+                    </div>
+
+                    {/* Main Menu */}
+                    <div className="mt-12 grid gap-6 md:grid-cols-3">
+
+                        {/* Continue Game */}
+                        <Link
+                            href="/gamemode"
+                            className="
+                                rounded-2xl
+                                border-2
+                                border-zinc-700
+                                bg-zinc-900
+                                p-8
+                                text-center
+                                shadow-xl
+                                transition
+                                hover:-translate-y-1
+                                hover:border-zinc-500
+                                hover:bg-zinc-800
+                            "
+                        >
+                            <h2 className="text-2xl font-extrabold">
+                                Continue Game
+                            </h2>
+
+                            <p className="mt-3 text-zinc-400">
+                                Continue your investigation.
+                            </p>
+                        </Link>
+
+                        {/* Lore */}
+                        <Link
+                            href="/lore"
+                            className="
+                                rounded-2xl
+                                border-2
+                                border-zinc-700
+                                bg-zinc-900
+                                p-8
+                                text-center
+                                shadow-xl
+                                transition
+                                hover:-translate-y-1
+                                hover:border-zinc-500
+                                hover:bg-zinc-800
+                            "
+                        >
+                            <h2 className="text-2xl font-extrabold">
+                                Lore
+                            </h2>
+
+                            <p className="mt-3 text-zinc-400">
+                                Discover the world of Futurepura.
+                            </p>
+                        </Link>
+
+                        {/* How To Play */}
+                        <Link
+                            href="/howtoplay"
+                            className="
+                                rounded-2xl
+                                border-2
+                                border-zinc-700
+                                bg-zinc-900
+                                p-8
+                                text-center
+                                shadow-xl
+                                transition
+                                hover:-translate-y-1
+                                hover:border-zinc-500
+                                hover:bg-zinc-800
+                            "
+                        >
+                            <h2 className="text-2xl font-extrabold">
+                                How to Play
+                            </h2>
+
+                            <p className="mt-3 text-zinc-400">
+                                Learn how to investigate suspicious messages.
+                            </p>
+                        </Link>
+
+                    </div>
+                </div>
+            </main>
+        ) : (<>
+                    {/* TITLE */}
+                <motion.h1
                 className="
                     mt-3
                     text-center
@@ -365,6 +471,10 @@ export default function Home() {
                     JOIN STEP BACK
                 </Link>
             </motion.div>
+                </>
+                   
+                )}
+            
         </>
     );
 }

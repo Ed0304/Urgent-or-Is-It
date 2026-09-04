@@ -123,6 +123,18 @@ export default function Header() {
                             lg:flex
                         "
                     >
+                        <Link href="/gamemode" 
+                        className="transition-opacity hover:opacity-60">
+                            Game Modes
+                        </Link>
+                        <Link href="/lore" 
+                        className="transition-opacity hover:opacity-60">
+                            Lore
+                        </Link>
+                        <Link href="/howtoplay" 
+                        className="transition-opacity hover:opacity-60">
+                           How to Play
+                        </Link>
                         <Link href="/userProfile" 
                         className="transition-opacity hover:opacity-60">
                             Profile Settings
