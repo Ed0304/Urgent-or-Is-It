@@ -4,43 +4,10 @@ import {
     storyChapters
 } from "@/components/frontend/GameSkeleton/chapters";
 
-
-interface Level {
-
-    order: number;
-    title: string;
-    description: string;
-
-}
-
-const chapterLevels: Record<number, Level[]> = {
-
-    0: [
-
-        {
-            order: 1,
-            title: "First Day Training",
-            description:
-                "Learn the basics of investigating suspicious messages."
-        },
-
-        {
-            order: 2,
-            title: "Investigation Practice",
-            description:
-                "Put your investigation skills to the test."
-        },
-
-        {
-            order: 3,
-            title: "Your First Case",
-            description:
-                "A real case has arrived at STEP BACK."
-        }
-
-    ]
-
-};
+import {
+    chapterLevels,
+    Level
+} from "@/components/frontend/GameSkeleton/levels";
 
 
 export default async function ChapterLevelSelect({
@@ -51,19 +18,55 @@ export default async function ChapterLevelSelect({
     }>;
 }) {
 
-    // Get the actual route parameter
     const { chapter } = await params;
 
-    // Convert "0" → 0
     const chapterNumber = Number(chapter);
 
-    // Find chapter in your data
     const chapterData = storyChapters.find(
         (chapter) => chapter.order === chapterNumber
     );
 
-    // Find levels belonging to that chapter
     const levels = chapterLevels[chapterNumber] ?? [];
+
+
+    // =========================================
+    // INVALID CHAPTER
+    // =========================================
+
+    if (!chapterData) {
+
+        return (
+            <main className="
+                min-h-screen
+                bg-black
+                px-6
+                py-12
+                text-white
+            ">
+
+                <div className="
+                    mx-auto
+                    max-w-4xl
+                    text-center
+                ">
+
+                    <h1 className="
+                        text-4xl
+                        font-extrabold
+                    ">
+                        Chapter Not Found
+                    </h1>
+
+                </div>
+
+            </main>
+        );
+    }
+
+
+    // =========================================
+    // PAGE
+    // =========================================
 
     return (
         <main className="
@@ -79,9 +82,7 @@ export default async function ChapterLevelSelect({
                 max-w-6xl
             ">
 
-                {/* =================================
-                    HEADER
-                   ================================= */}
+                {/* HEADER */}
 
                 <section className="
                     py-10
@@ -108,7 +109,7 @@ export default async function ChapterLevelSelect({
                         font-extrabold
                         md:text-6xl
                     ">
-                        {chapterData?.title}
+                        {chapterData.title}
                     </h1>
 
                     <p className="
@@ -121,9 +122,7 @@ export default async function ChapterLevelSelect({
                 </section>
 
 
-                {/* =================================
-                    LEVEL SELECT
-                   ================================= */}
+                {/* LEVEL SELECT */}
 
                 {levels.length > 0 ? (
 
@@ -173,11 +172,6 @@ export default async function ChapterLevelSelect({
         </main>
     );
 }
-
-
-/* =========================================
-   LEVEL CARD
-   ========================================= */
 
 function LevelSelectionBox({
     chapter,

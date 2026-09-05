@@ -1,7 +1,0 @@
-interface Level {
-
-    order: number;
-    title: string;
-    description: string;
-
-}
