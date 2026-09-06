@@ -46,4 +46,6 @@ Thumbs.db
 
 # NestJS build output
 backend/dist/
+
+
 backend/src/database/seeds

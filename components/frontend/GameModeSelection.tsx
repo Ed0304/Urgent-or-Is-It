@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import BackButton from "./buttons/backButton";
 
 export default function GameModeSelection() {
     return (
@@ -89,7 +90,7 @@ export default function GameModeSelection() {
                             </div>
                         </div>
                     </div>
-
+                    <BackButton/>
                 </div>
             </div>
         </main>

@@ -36,6 +36,7 @@ export class MessagesService {
             .find({
                 chapter,
                 level,
+                message_type : "Email"
             })
             .lean();
 
@@ -43,29 +44,29 @@ export class MessagesService {
             .find({
                 chapter,
                 level,
+                message_type : "SMS"
             })
             .lean();
 
 
-        // Combine Email and SMS messages
         const messages = [
 
             ...emails.map((email) => ({
-                type: "email",
                 ...email,
+                messageType: "Email" as const,
             })),
 
-            ...sms.map((message) => ({
-                type: "sms",
-                ...message,
+            ...sms.map((sms) => ({
+                ...sms,
+                messageType: "SMS" as const,
             })),
 
         ];
 
 
-        // The order belongs to the level,
-        // regardless of whether the message is Email or SMS.
-        messages.sort((a, b) => a.order - b.order);
+        messages.sort(
+            (a, b) => a.order - b.order
+        );
 
 
         return messages;

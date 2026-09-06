@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Chapter, storyChapters } from "./chapters";
-
+import BackButton from "../buttons/backButton";
 // Function to define how chapter select boxes look
 function ChapterSelectionBox({ chapter }: { chapter: Chapter }) {
     return (
@@ -185,6 +185,9 @@ export default function SelectChapter() {
                         `}
                     />
                 ))}
+            </div>
+            <div className="mt-8 flex justify-center">
+                <BackButton />
             </div>
 
         </main>

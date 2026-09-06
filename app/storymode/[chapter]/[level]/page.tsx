@@ -6,6 +6,8 @@ import {
     chapterLevels
 } from "@/components/frontend/GameSkeleton/levels";
 
+import GameLevel from "@/components/frontend/GameSkeleton/gameLevel";
+import LevelIntro from "@/components/frontend/GameSkeleton/LevelIntro";
 
 export default async function StoryLevel({
     params
@@ -26,7 +28,9 @@ export default async function StoryLevel({
     const levelNumber = Number(level);
 
 
-    // Find chapter
+    // =========================================
+    // FIND CHAPTER
+    // =========================================
 
     const chapterData = storyChapters.find(
         (chapter) =>
@@ -34,7 +38,9 @@ export default async function StoryLevel({
     );
 
 
-    // Find level
+    // =========================================
+    // FIND LEVEL
+    // =========================================
 
     const levelData = chapterLevels[chapterNumber]?.find(
         (level) =>
@@ -78,6 +84,30 @@ export default async function StoryLevel({
 
 
     // =========================================
+    // FETCH GAME MESSAGES
+    // =========================================
+
+    const response = await fetch(
+        `http://localhost:3001/messages/${chapterNumber}/${levelNumber}`,
+        {
+            cache: "no-store",
+        }
+    );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Failed to fetch level messages"
+        );
+
+    }
+
+
+    const messages = await response.json();
+
+
+    // =========================================
     // GAME
     // =========================================
 
@@ -102,9 +132,11 @@ export default async function StoryLevel({
                     tracking-[0.3em]
                     text-zinc-500
                 ">
+
                     {chapterNumber === 0
                         ? "Prologue"
                         : `Chapter ${chapterNumber}`}
+
                 </p>
 
 
@@ -113,7 +145,9 @@ export default async function StoryLevel({
                     text-5xl
                     font-extrabold
                 ">
+
                     {levelData.title}
+
                 </h1>
 
 
@@ -122,38 +156,26 @@ export default async function StoryLevel({
                     text-lg
                     text-zinc-400
                 ">
+
                     {levelData.description}
+
                 </p>
 
 
                 {/* =================================
-                    GAME CONTENT GOES HERE
+                    GAME
                    ================================= */}
 
-                <section className="
-                    mt-12
-                    rounded-2xl
-                    border-2
-                    border-zinc-800
-                    bg-zinc-900
-                    p-8
-                ">
+                <section className="mt-12">
 
-                    <h2 className="
-                        text-2xl
-                        font-bold
-                    ">
-                        Game Area
-                    </h2>
+                <LevelIntro
+                    blurb={levelData.blurb}
+                    messageCount={messages.length}
+                >
+                    <GameLevel messages={messages} />
+                </LevelIntro>
 
-                    <p className="
-                        mt-3
-                        text-zinc-400
-                    ">
-                        Your actual level gameplay will go here.
-                    </p>
-
-                </section>
+            </section>
 
             </div>
 

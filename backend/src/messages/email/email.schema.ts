@@ -29,6 +29,12 @@ export class Email {
 
     @Prop({ required: true, type: Boolean })
     legit!: boolean;
+
+    @Prop({ required: false, type: String })
+    linkText?: string;
+
+    @Prop({ required: false, type: String })
+    linkUrl?: string;
 }
 
 export const EmailSchema = SchemaFactory.createForClass(Email);
