@@ -23,7 +23,7 @@ export default async function StoryLevel({
         level
     } = await params;
 
-
+    
     const chapterNumber = Number(chapter);
     const levelNumber = Number(level);
 
@@ -172,7 +172,11 @@ export default async function StoryLevel({
                     blurb={levelData.blurb}
                     messageCount={messages.length}
                 >
-                    <GameLevel messages={messages} />
+                    <GameLevel
+                        messages={messages}
+                        levelId={messages[0]?.level_id}
+                        chapter={chapterNumber}
+                    />
                 </LevelIntro>
 
             </section>

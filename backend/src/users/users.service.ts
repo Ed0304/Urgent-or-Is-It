@@ -15,8 +15,8 @@ export class UsersService {
         private userModel: Model<UserDocument>
     ) {}
 
-    async findById(userId:String): Promise<UserDocument|null>{
-        return this.userModel.findOne(userId);
+    async findById(userId: string) {
+        return this.userModel.findById(userId);
     }
 
     async findByUsername(username:string): Promise<UserDocument|null> {
@@ -32,5 +32,23 @@ export class UsersService {
             username, email, passwordHash,highScore,storyLevelsCompleted
         })
         return user.save()
+    }
+
+    async completeStoryLevel(
+        userId: string,
+        levelId: number,
+    ): Promise<UserDocument | null> {
+
+        return this.userModel.findByIdAndUpdate(
+            userId,
+            {
+                $addToSet: { //Only push if something hasn't existed yet in array.
+                    storyLevelsCompleted: levelId, 
+                },
+            },
+            {
+                new: true,
+            },
+        ).exec();
     }
 }

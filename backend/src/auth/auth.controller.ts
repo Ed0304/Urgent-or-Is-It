@@ -26,9 +26,10 @@ export class AuthController {
     @Get('profile')
     @UseGuards(JwtGuard)
     profile(@Req() request: any) {
-        return request.user;
+        return this.authService.getProfile(
+            request.user.sub
+        );
     }
-
     @Patch('password')
     @UseGuards(JwtGuard)
     changePassword(

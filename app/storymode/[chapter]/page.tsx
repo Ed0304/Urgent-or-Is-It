@@ -1,5 +1,8 @@
-import Link from "next/link";
+"use client";
 
+import Link from "next/link";
+import { use, useEffect, useState } from "react";
+import LevelSelectionBox from "@/components/frontend/GameSkeleton/levelselectionbox";
 import {
     storyChapters
 } from "@/components/frontend/GameSkeleton/chapters";
@@ -9,8 +12,10 @@ import {
     Level
 } from "@/components/frontend/GameSkeleton/levels";
 
+import BackButton from "@/components/frontend/buttons/backButton";
 
-export default async function ChapterLevelSelect({
+
+export default function ChapterLevelSelect({
     params
 }: {
     params: Promise<{
@@ -18,15 +23,81 @@ export default async function ChapterLevelSelect({
     }>;
 }) {
 
-    const { chapter } = await params;
+    const { chapter } = use(params);
 
     const chapterNumber = Number(chapter);
 
     const chapterData = storyChapters.find(
-        (chapter) => chapter.order === chapterNumber
+        (chapter) =>
+            chapter.order === chapterNumber
     );
 
     const levels = chapterLevels[chapterNumber] ?? [];
+
+    const [completedLevels, setCompletedLevels] =
+        useState<number[]>([]);
+
+    const [loading, setLoading] =
+        useState(true);
+
+
+    // =========================================
+    // FETCH USER PROGRESS
+    // =========================================
+
+    useEffect(() => {
+
+        async function getProgress() {
+
+            const token =
+                localStorage.getItem("access_token");
+
+            if (!token) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+
+                const response = await fetch(
+                    "http://localhost:3001/auth/profile",
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                if (!response.ok) {
+                    setLoading(false);
+                    return;
+                }
+
+                const data = await response.json();
+
+                setCompletedLevels(
+                    data.storyLevelsCompleted ?? []
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to fetch story progress:",
+                    error
+                );
+
+            } finally {
+
+                setLoading(false);
+
+            }
+        }
+
+        getProgress();
+
+    }, []);
 
 
     // =========================================
@@ -103,6 +174,7 @@ export default async function ChapterLevelSelect({
 
                     </p>
 
+
                     <h1 className="
                         mt-3
                         text-4xl
@@ -111,6 +183,7 @@ export default async function ChapterLevelSelect({
                     ">
                         {chapterData.title}
                     </h1>
+
 
                     <p className="
                         mt-4
@@ -133,15 +206,35 @@ export default async function ChapterLevelSelect({
                         pb-6
                     ">
 
-                        {levels.map((level) => (
+                        {levels.map((level) => {
 
-                            <LevelSelectionBox
-                                key={level.order}
-                                chapter={chapterNumber}
-                                level={level}
-                            />
+                            const completed =
+                                completedLevels.includes(level.level_id);
 
-                        ))}
+                            const previousLevel =
+                                levels.find(
+                                    (previous) =>
+                                        previous.order === level.order - 1
+                                );
+
+                            const locked =
+                                level.order > 1 &&
+                                previousLevel !== undefined &&
+                                !completedLevels.includes(previousLevel.level_id);
+
+
+                            return (
+                                <LevelSelectionBox
+                                    key={level.order}
+                                    chapter={chapterNumber}
+                                    level={level}
+                                    completed={completed}
+                                    locked={locked}
+                                    loading={loading}
+                                />
+                            );
+
+                        })}
 
                     </div>
 
@@ -167,86 +260,11 @@ export default async function ChapterLevelSelect({
 
                 )}
 
+
+                <BackButton />
+
             </div>
 
         </main>
-    );
-}
-
-function LevelSelectionBox({
-    chapter,
-    level
-}: {
-    chapter: number;
-    level: Level;
-}) {
-
-    return (
-        <article className="
-            flex
-            min-w-[300px]
-            max-w-[320px]
-            shrink-0
-            flex-col
-            rounded-2xl
-            border-2
-            border-zinc-700
-            bg-zinc-900
-            p-8
-            shadow-xl
-            transition
-            hover:-translate-y-1
-            hover:border-zinc-500
-        ">
-
-            <p className="
-                text-xs
-                font-bold
-                uppercase
-                tracking-[0.2em]
-                text-zinc-500
-            ">
-                Level {level.order}
-            </p>
-
-            <h2 className="
-                mt-3
-                text-2xl
-                font-extrabold
-            ">
-                {level.title}
-            </h2>
-
-            <p className="
-                mt-4
-                min-h-[80px]
-                text-sm
-                leading-relaxed
-                text-zinc-400
-            ">
-                {level.description}
-            </p>
-
-            <Link
-                href={`/storymode/${chapter}/${level.order}`}
-                className="
-                    mt-8
-                    rounded-xl
-                    border-2
-                    border-zinc-700
-                    bg-black
-                    px-8
-                    py-3
-                    text-center
-                    font-bold
-                    transition
-                    hover:border-zinc-500
-                    hover:bg-zinc-800
-                "
-            >
-                Start
-            </Link>
-
-        </article>
     );
 }

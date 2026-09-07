@@ -24,6 +24,7 @@ export const storyChapters: Chapter[] = [
             { text: " steps in....", bold: true, italic: true}
         ],
     },
+    /*
     {
         order: 1,
         title: "The PuraTrust Bank Scandal", //THEME: Bank email scams
@@ -56,4 +57,5 @@ export const storyChapters: Chapter[] = [
             {text: "Then, someone, unknowingly had took advantage of the situation..", italic:true}
         ] 
     }
+        */
 ]

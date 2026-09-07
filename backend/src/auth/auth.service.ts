@@ -87,4 +87,20 @@ export class AuthService {
         const newPasswordHash = bcrypt.hash(newPassword,10)
         // update passwordHash
     }
+
+    async getProfile(userId: string) {
+
+        const user = await this.usersService.findById(userId);
+
+        if (!user) {
+            throw new UnauthorizedException();
+        }
+
+        return {
+            username: user.username,
+            email: user.email,
+            storyLevelsCompleted:
+                user.storyLevelsCompleted,
+        };
+    }
 }

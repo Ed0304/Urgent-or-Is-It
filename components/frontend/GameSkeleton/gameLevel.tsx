@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface Message {
@@ -14,9 +15,13 @@ interface Message {
 }
 
 export default function GameLevel({
-    messages
+    messages,
+    levelId,
+    chapter,
 }: {
     messages: Message[];
+    levelId?: number;
+    chapter?: number;
 }) {
 
     const [currentMessage, setCurrentMessage] =
@@ -24,6 +29,8 @@ export default function GameLevel({
 
     const [selectedAnswer, setSelectedAnswer] =
         useState<"phish" | "legit" | null>(null);
+
+    const router = useRouter();
 
 
     // =========================================
@@ -34,7 +41,95 @@ export default function GameLevel({
 
 
     // =========================================
-    // LEVEL COMPLETE
+    // FINISH LEVEL
+    // =========================================
+
+    async function finishLevel() {
+
+        const token =
+            localStorage.getItem("access_token");
+
+        if (
+            !token ||
+            levelId === undefined ||
+            chapter === undefined
+        ) {
+            return;
+        }
+
+
+        const response = await fetch(
+            `http://localhost:3001/users/story-progress/${levelId}`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+
+        if (!response.ok) {
+
+            console.error(
+                "Failed to complete level"
+            );
+
+            return;
+        }
+
+
+        router.push(
+            `/storymode/${chapter}`
+        );
+    }
+
+
+    // =========================================
+    // ANSWER
+    // =========================================
+
+    function answer(
+        choice: "phish" | "legit"
+    ) {
+
+        // Prevent answering twice
+
+        if (selectedAnswer !== null) {
+            return;
+        }
+
+        setSelectedAnswer(choice);
+    }
+
+
+    // =========================================
+    // NEXT MESSAGE
+    // =========================================
+
+    function nextMessage() {
+
+        setCurrentMessage(
+            currentMessage + 1
+        );
+
+        setSelectedAnswer(null);
+    }
+
+
+    // =========================================
+    // CHECK ANSWER
+    // =========================================
+
+    const isCorrect =
+        selectedAnswer !== null &&
+        (
+            selectedAnswer === "legit"
+        ) === message?.legit;
+
+
+    // =========================================
+    // LEVEL COMPLETE FALLBACK
     // =========================================
 
     if (!message) {
@@ -65,51 +160,7 @@ export default function GameLevel({
 
             </section>
         );
-
     }
-
-
-    // =========================================
-    // ANSWER
-    // =========================================
-
-    function answer(
-        choice: "phish" | "legit"
-    ) {
-
-        if (selectedAnswer !== null) {
-            return;
-        }
-
-        setSelectedAnswer(choice);
-
-    }
-
-
-    // =========================================
-    // NEXT MESSAGE
-    // =========================================
-
-    function nextMessage() {
-
-        setCurrentMessage(
-            currentMessage + 1
-        );
-
-        setSelectedAnswer(null);
-
-    }
-
-
-    // =========================================
-    // CHECK ANSWER
-    // =========================================
-
-    const isCorrect =
-        selectedAnswer !== null &&
-        (
-            selectedAnswer === "legit"
-        ) === message.legit;
 
 
     // =========================================
@@ -227,7 +278,10 @@ export default function GameLevel({
                     p-6
                 ">
 
-                    <h3 className="text-xl font-bold">
+                    <h3 className="
+                        text-xl
+                        font-bold
+                    ">
 
                         {isCorrect
                             ? "Correct!"
@@ -248,17 +302,28 @@ export default function GameLevel({
                             font-bold
                             text-white
                         ">
+
                             {message.legit
                                 ? "LEGIT"
                                 : "PHISH"
                             }
+
                         </span>.
 
                     </p>
 
 
+                    {/* =================================
+                        NEXT / FINISH BUTTON
+                       ================================= */}
+
                     <button
-                        onClick={nextMessage}
+                        onClick={
+                            currentMessage ===
+                            messages.length - 1
+                                ? finishLevel
+                                : nextMessage
+                        }
                         className="
                             mt-5
                             rounded-xl
@@ -271,7 +336,13 @@ export default function GameLevel({
                             hover:bg-zinc-200
                         "
                     >
-                        Next
+
+                        {currentMessage ===
+                        messages.length - 1
+                            ? "Finish Level"
+                            : "Next"
+                        }
+
                     </button>
 
                 </div>
@@ -281,8 +352,12 @@ export default function GameLevel({
         </section>
 
     );
-
 }
+
+
+// =========================================
+// EMAIL MESSAGE
+// =========================================
 
 function EmailMessage({
     message
@@ -307,19 +382,23 @@ function EmailMessage({
                 tracking-[0.2em]
                 text-zinc-500
             ">
-
                 Email
-
             </p>
 
 
             <div className="mt-6">
 
-                <p className="text-sm text-zinc-500">
+                <p className="
+                    text-sm
+                    text-zinc-500
+                ">
                     From
                 </p>
 
-                <p className="mt-1 font-semibold">
+                <p className="
+                    mt-1
+                    font-semibold
+                ">
                     {message.sender}
                 </p>
 
@@ -328,7 +407,10 @@ function EmailMessage({
 
             <div className="mt-5">
 
-                <p className="text-sm text-zinc-500">
+                <p className="
+                    text-sm
+                    text-zinc-500
+                ">
                     Subject
                 </p>
 
@@ -337,9 +419,7 @@ function EmailMessage({
                     text-2xl
                     font-bold
                 ">
-
                     {message.subject}
-
                 </h2>
 
             </div>
@@ -351,16 +431,18 @@ function EmailMessage({
                 leading-relaxed
                 text-zinc-300
             ">
-
                 {message.message}
-
             </div>
 
         </article>
 
     );
-
 }
+
+
+// =========================================
+// SMS MESSAGE
+// =========================================
 
 function SMSMessage({
     message
@@ -385,19 +467,23 @@ function SMSMessage({
                 tracking-[0.2em]
                 text-zinc-500
             ">
-
                 SMS
-
             </p>
 
 
             <div className="mt-6">
 
-                <p className="text-sm text-zinc-500">
+                <p className="
+                    text-sm
+                    text-zinc-500
+                ">
                     From
                 </p>
 
-                <p className="mt-1 font-semibold">
+                <p className="
+                    mt-1
+                    font-semibold
+                ">
                     {message.sender}
                 </p>
 
@@ -416,9 +502,7 @@ function SMSMessage({
                     leading-relaxed
                     text-zinc-300
                 ">
-
                     {message.message}
-
                 </p>
 
             </div>
@@ -426,5 +510,4 @@ function SMSMessage({
         </article>
 
     );
-
 }

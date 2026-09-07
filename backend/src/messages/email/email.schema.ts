@@ -6,6 +6,10 @@ export type EmailDocument = HydratedDocument<Email>;
 @Schema({ timestamps: true ,collection: "messages"})
 export class Email {
 
+    // Identifier used by the app to determine which levels the user has completed.
+    @Prop({ required: true, type: Number })
+    level_id!: number;
+
     @Prop({ required: true, type: String, default:"Email"})
     message_type!: string
 

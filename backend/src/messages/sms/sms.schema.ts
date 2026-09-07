@@ -6,6 +6,10 @@ export type SMSDocument = HydratedDocument<SMS>;
 @Schema({ timestamps: true ,collection: "messages" })
 export class SMS {
 
+    // Identifier used by the app to determine which levels the user has completed.
+    @Prop({ required: true, type: Number })
+    level_id!: number;
+
     @Prop({ required: true, type: String, default:"SMS"})
     message_type!: string
 
