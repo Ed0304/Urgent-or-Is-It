@@ -171,6 +171,7 @@ export default async function StoryLevel({
                 <LevelIntro
                     blurb={levelData.blurb}
                     messageCount={messages.length}
+                    tutorial={levelData.tutorial}
                 >
                     <GameLevel
                         messages={messages}

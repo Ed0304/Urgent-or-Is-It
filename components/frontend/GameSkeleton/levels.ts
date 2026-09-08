@@ -4,7 +4,8 @@
 // from the backend through the REST API.
 
 export interface TutorialDialogue{
-
+    speaker: string;
+    text: string;
 }
 
 export interface Level {
@@ -13,6 +14,7 @@ export interface Level {
     title: string;
     description: string;
     blurb?: TextPart[];
+    tutorial?: TutorialDialogue[];
 }
 
 export interface TextPart {
@@ -61,7 +63,53 @@ export const chapterLevels: Record<number, Level[]> = {
 
                 { text: "Then, it's all up to you, rookie.", bold: true }
             ],
-            level_id:1
+            level_id:1,
+            tutorial: [
+                {
+                    speaker: "Geofrey",
+                    text: "First, I want you to know what PuraTrust Bank is."
+                },
+
+                {
+                    speaker: "You",
+                    text: "PuraTrust Bank? The bank everyone uses?"
+                },
+
+                {
+                    speaker: "Geofrey",
+                    text: "Exactly. PuraTrust regularly sends notifications about transactions, account activity, and security alerts."
+                },
+
+                {
+                    speaker: "Geofrey",
+                    text: "But remember—just because a message claims to be from PuraTrust doesn't mean it actually is."
+                },
+
+                {
+                    speaker: "You",
+                    text: "So I should investigate the message first?"
+                },
+
+                {
+                    speaker: "Geofrey",
+                    text: "That's right. If there are any misspellings or unusual wording, mark it suspicious."
+                },
+
+                {
+                    speaker: "Geofrey",
+                    text: "Trust your gut. If something feels off, then it probably deserves a closer look."
+                },
+
+                {
+                    speaker: "Geofrey",
+                    text: "Oh, by the way—once you've investigated thoroughly, click PHISH or LEGIT to submit your answer."
+                },
+
+                {
+                    speaker: "Geofrey",
+                    text: "Alright. Let's see what you've got. FYI- Puratrust always send emails that end with @Puratrust.com, however you also need to check the contents too. "
+                }
+            ]
         },
 
         {
@@ -80,16 +128,51 @@ export const chapterLevels: Record<number, Level[]> = {
                 { text: " -Geofrey Boon, founder of STEP BACK. ", bold: true },
 
             ],
-            level_id:2
+            level_id:2,
+            tutorial: [
+                {
+                    speaker: "Geofrey",
+                    text: "Excellent work, rookie. Now let's work on SMS messages."
+                },
+                {
+                    speaker: "Geofrey",
+                    text: "Just to let you know, like emails, they can contain links that may be traps."
+                },
+                {
+                    speaker: "Geofrey",
+                    text: "However, SMS messages tend to be shorter, so you need to pay closer attention to where the message is coming from and what it is asking you to do."
+                },
+                {
+                    speaker: "You",
+                    text: "So I should check the sender and the link before doing anything?"
+                },
+                {
+                    speaker: "Geofrey",
+                    text: "Exactly. Don't let a short message pressure you into making a quick decision."
+                },
+                {
+                    speaker: "Geofrey",
+                    text: "Take your time, inspect the details, and trust your gut if something feels off."
+                },
+                {
+                    speaker: "Geofrey",
+                    text: "Alright, rookie. Let's see how well you can spot a malicious SMS."
+                }
+            ]
         },
 
         {
             order: 3,
-            title: "Your First Case",
+            title: "Your First Test",
             description:
-                "A real case has arrived at STEP BACK."
+                "Now, apply the skills you learnt to be a part of STEP BACK to tackle cases."
             ,
-            level_id:3
+            level_id:3,
+            blurb:[
+                { text: " 'Alright, it seems you get the basics now.' "},
+                { text: " 'Now, it's time to apply those skills to the test.' "},
+                { text: " -Geofrey Boon, founder of STEP BACK. ", bold: true },
+            ]
         }
 
     ],

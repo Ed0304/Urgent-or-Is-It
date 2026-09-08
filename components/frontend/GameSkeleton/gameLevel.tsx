@@ -10,8 +10,10 @@ interface Message {
     chapter: number;
     level: number;
     order: number;
-    messageType: "email" | "sms";
+    messageType: "Email" | "sms";
     legit: boolean;
+    linkText?: string;
+    linkUrl?:string;
 }
 
 export default function GameLevel({
@@ -24,14 +26,20 @@ export default function GameLevel({
     chapter?: number;
 }) {
 
-    const [currentMessage, setCurrentMessage] =
-        useState(0);
+    const router = useRouter();
+
+    const [currentMessage, setCurrentMessage] = useState(0);
 
     const [selectedAnswer, setSelectedAnswer] =
         useState<"phish" | "legit" | null>(null);
 
-    const router = useRouter();
+    const [correctAnswers, setCorrectAnswers] = useState(0);
 
+    const [levelFinished, setLevelFinished] = useState(false);
+
+    const [finishing, setFinishing] = useState(false);
+
+    console.log(messages)
 
     // =========================================
     // CURRENT MESSAGE
@@ -46,42 +54,177 @@ export default function GameLevel({
 
     async function finishLevel() {
 
+        if (levelId === undefined || chapter === undefined) {
+            console.error("Missing levelId or chapter");
+            return;
+        }
+
         const token =
             localStorage.getItem("access_token");
 
-        if (
-            !token ||
-            levelId === undefined ||
-            chapter === undefined
-        ) {
+        if (!token) {
+            console.error("No access token found");
             return;
         }
 
+        setFinishing(true);
 
-        const response = await fetch(
-            `http://localhost:3001/users/story-progress/${levelId}`,
-            {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
+        try {
 
-
-        if (!response.ok) {
-
-            console.error(
-                "Failed to complete level"
+            const response = await fetch(
+                `http://localhost:3001/users/story-progress/${levelId}`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
 
-            return;
+            if (!response.ok) {
+                console.error("Failed to complete level");
+                setFinishing(false);
+                return;
+            }
+
+            router.push(
+                `/storymode/${chapter}`
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Failed to save story progress",
+                error
+            );
+
+            setFinishing(false);
         }
+    }
 
 
-        router.push(
-            `/storymode/${chapter}`
+    // =========================================
+    // RESULTS
+    // =========================================
+
+    if (levelFinished) {
+
+        const percentage = Math.round(
+            (correctAnswers / messages.length) * 100
         );
+
+        const feedback = getFeedback(
+            correctAnswers,
+            messages.length
+        );
+
+
+        return (
+            <section className="
+                rounded-2xl
+                border-2
+                border-zinc-800
+                bg-zinc-900
+                p-8
+                text-center
+            ">
+
+                <p className="
+                    text-sm
+                    font-bold
+                    uppercase
+                    tracking-[0.3em]
+                    text-zinc-500
+                ">
+                    Level Complete
+                </p>
+
+
+                {/* SCORE */}
+
+                <h2 className="
+                    mt-6
+                    text-6xl
+                    font-extrabold
+                ">
+                    {percentage}%
+                </h2>
+
+
+                {/* FEEDBACK TITLE */}
+
+                <h3 className="
+                    mt-4
+                    text-3xl
+                    font-bold
+                ">
+                    {feedback.title}
+                </h3>
+
+
+                {/* FEEDBACK MESSAGE */}
+
+                <p className="
+                    mx-auto
+                    mt-4
+                    max-w-xl
+                    leading-relaxed
+                    text-zinc-400
+                ">
+                    {feedback.message}
+                </p>
+
+
+                {/* SCORE BREAKDOWN */}
+
+                <p className="
+                    mt-6
+                    text-zinc-500
+                ">
+                    {correctAnswers} / {messages.length} correct
+                </p>
+
+
+                {/* FINISH */}
+
+                <button
+                    type="button"
+                    onClick={finishLevel}
+                    disabled={finishing}
+                    className="
+                        mt-8
+                        rounded-xl
+                        bg-white
+                        px-8
+                        py-3
+                        font-bold
+                        text-black
+                        transition
+                        hover:bg-zinc-200
+                        disabled:cursor-not-allowed
+                        disabled:opacity-50
+                    "
+                >
+                    {finishing
+                        ? "Saving..."
+                        : "Finish Level"
+                    }
+                </button>
+
+            </section>
+        );
+    }
+
+
+    // =========================================
+    // NO MESSAGE
+    // =========================================
+
+    if (!message) {
+
+        setLevelFinished(true);
+
+        return null;
     }
 
 
@@ -93,13 +236,24 @@ export default function GameLevel({
         choice: "phish" | "legit"
     ) {
 
-        // Prevent answering twice
-
         if (selectedAnswer !== null) {
             return;
         }
 
         setSelectedAnswer(choice);
+
+
+        const correct =
+            (choice === "legit") === message.legit;
+
+
+        if (correct) {
+
+            setCorrectAnswers(
+                (current) => current + 1
+            );
+
+        }
     }
 
 
@@ -109,8 +263,17 @@ export default function GameLevel({
 
     function nextMessage() {
 
+        if (
+            currentMessage ===
+            messages.length - 1
+        ) {
+
+            setLevelFinished(true);
+            return;
+        }
+
         setCurrentMessage(
-            currentMessage + 1
+            (current) => current + 1
         );
 
         setSelectedAnswer(null);
@@ -125,46 +288,11 @@ export default function GameLevel({
         selectedAnswer !== null &&
         (
             selectedAnswer === "legit"
-        ) === message?.legit;
+        ) === message.legit;
 
 
     // =========================================
-    // LEVEL COMPLETE FALLBACK
-    // =========================================
-
-    if (!message) {
-
-        return (
-            <section className="
-                rounded-2xl
-                border-2
-                border-zinc-800
-                bg-zinc-900
-                p-8
-                text-center
-            ">
-
-                <h2 className="
-                    text-3xl
-                    font-extrabold
-                ">
-                    Level Complete
-                </h2>
-
-                <p className="
-                    mt-3
-                    text-zinc-400
-                ">
-                    You have reviewed all messages.
-                </p>
-
-            </section>
-        );
-    }
-
-
-    // =========================================
-    // RENDER
+    // RENDER GAME
     // =========================================
 
     return (
@@ -192,7 +320,7 @@ export default function GameLevel({
                 MESSAGE
                ================================= */}
 
-            {message.messageType === "email" ? (
+            {message.messageType === "Email" ? (
 
                 <EmailMessage
                     message={message}
@@ -217,6 +345,7 @@ export default function GameLevel({
             ">
 
                 <button
+                    type="button"
                     onClick={() => answer("phish")}
                     disabled={selectedAnswer !== null}
                     className="
@@ -240,6 +369,7 @@ export default function GameLevel({
 
 
                 <button
+                    type="button"
                     onClick={() => answer("legit")}
                     disabled={selectedAnswer !== null}
                     className="
@@ -282,12 +412,10 @@ export default function GameLevel({
                         text-xl
                         font-bold
                     ">
-
                         {isCorrect
                             ? "Correct!"
                             : "Incorrect!"
                         }
-
                     </h3>
 
 
@@ -302,28 +430,18 @@ export default function GameLevel({
                             font-bold
                             text-white
                         ">
-
                             {message.legit
                                 ? "LEGIT"
                                 : "PHISH"
                             }
-
                         </span>.
 
                     </p>
 
 
-                    {/* =================================
-                        NEXT / FINISH BUTTON
-                       ================================= */}
-
                     <button
-                        onClick={
-                            currentMessage ===
-                            messages.length - 1
-                                ? finishLevel
-                                : nextMessage
-                        }
+                        type="button"
+                        onClick={nextMessage}
                         className="
                             mt-5
                             rounded-xl
@@ -336,13 +454,10 @@ export default function GameLevel({
                             hover:bg-zinc-200
                         "
                     >
-
-                        {currentMessage ===
-                        messages.length - 1
-                            ? "Finish Level"
+                        {currentMessage === messages.length - 1
+                            ? "View Results"
                             : "Next"
                         }
-
                     </button>
 
                 </div>
@@ -350,17 +465,82 @@ export default function GameLevel({
             )}
 
         </section>
-
     );
 }
 
 
-// =========================================
-// EMAIL MESSAGE
-// =========================================
+// =============================================
+// FEEDBACK SYSTEM
+// =============================================
+
+function getFeedback(
+    correct: number,
+    total: number
+) {
+
+    const percentage =
+        (correct / total) * 100;
+
+
+    if (percentage === 100) {
+
+        return {
+            title: "Perfect!",
+            message:
+                "You handled those emails well.",
+        };
+
+    }
+
+
+    if (percentage >= 90) {
+
+        return {
+            title: "Excellent!",
+            message:
+                "Just a bit of additional thorough checks.",
+        };
+
+    }
+
+
+    if (percentage >= 70) {
+
+        return {
+            title: "Good job!",
+            message:
+                "But you should take more time on inspecting them.",
+        };
+
+    }
+
+
+    if (percentage >= 50) {
+
+        return {
+            title:
+                "I believe you are much better than this!",
+            message:
+                "Don't rush!",
+        };
+
+    }
+
+
+    return {
+        title: "Keep practicing!",
+        message:
+            "Take your time and inspect each message carefully.",
+    };
+}
+
+
+// =============================================
+// EMAIL
+// =============================================
 
 function EmailMessage({
-    message
+    message,
 }: {
     message: Message;
 }) {
@@ -434,18 +614,66 @@ function EmailMessage({
                 {message.message}
             </div>
 
-        </article>
+                {message.linkText && message.linkUrl && (
+            <div className="relative mt-8 group">
 
+                <button
+                    type="button"
+                    className="
+                        rounded-xl
+                        border-2
+                        border-zinc-700
+                        bg-black
+                        px-6
+                        py-3
+                        font-bold
+                        transition
+                        hover:border-zinc-500
+                        hover:bg-zinc-800
+                    "
+                >
+                    {message.linkText}
+                </button>
+
+                {/* URL shown on hover */}
+                <div
+                    className="
+                        pointer-events-none
+                        absolute
+                        bottom-full
+                        left-0
+                        mb-2
+                        hidden
+                        max-w-xl
+                        rounded-lg
+                        border
+                        border-zinc-700
+                        bg-black
+                        px-4
+                        py-2
+                        text-sm
+                        text-zinc-300
+                        shadow-xl
+                        group-hover:block
+                    "
+                >
+                    {message.linkUrl}
+                </div>
+
+    </div>
+)}
+
+        </article>
     );
 }
 
 
-// =========================================
-// SMS MESSAGE
-// =========================================
+// =============================================
+// SMS
+// =============================================
 
 function SMSMessage({
-    message
+    message,
 }: {
     message: Message;
 }) {
@@ -508,6 +736,5 @@ function SMSMessage({
             </div>
 
         </article>
-
     );
 }
