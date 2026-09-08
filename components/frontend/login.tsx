@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 export async function getProfile(token: string) {
     const response = await fetch(
-        "http://localhost:3001/auth/profile",
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/profile`,
         {
             method: "GET",
             headers: {
@@ -167,7 +167,7 @@ export default function Login() {
                             setPasswordError("");
 
                             const response = await fetch(
-                                "http://localhost:3001/auth/login",
+                                `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
                                 {
                                     method: "POST",
                                     headers: {

@@ -16,7 +16,7 @@ export class UsersService {
     ) {}
 
     async findById(userId: string) {
-        return this.userModel.findById(userId);
+        return this.userModel.findById(userId).exec();;
     }
 
     async findByUsername(username:string): Promise<UserDocument|null> {

@@ -69,24 +69,37 @@ export class AuthService {
     userId: string,
     currentPassword: string,
     newPassword: string,
-    ) {
-        // find user
-        const user = await this.usersService.findById(userId);
+        ) {
+            const user = await this.usersService.findById(userId);
 
-        if (!user){
-            throw new UnauthorizedException()
+            if (!user) {
+                throw new UnauthorizedException();
+            }
+
+            const passwordMatches = await bcrypt.compare(
+                currentPassword,
+                user.passwordHash,
+            );
+
+            if (!passwordMatches) {
+                throw new UnauthorizedException(
+                    "Invalid current password"
+                );
+            }
+
+            const newPasswordHash = await bcrypt.hash(
+                newPassword,
+                10,
+            );
+
+            user.passwordHash = newPasswordHash;
+
+            await user.save();
+
+            return {
+                message: "Password changed successfully",
+            };
         }
-
-
-        // bcrypt.compare()
-        const passwordMatches = bcrypt.compare(currentPassword,user.passwordHash)
-        if(!passwordMatches){
-            throw new UnauthorizedException("Invalid current password")
-        }
-        // bcrypt.hash()
-        const newPasswordHash = bcrypt.hash(newPassword,10)
-        // update passwordHash
-    }
 
     async getProfile(userId: string) {
 

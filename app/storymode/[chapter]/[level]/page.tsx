@@ -132,7 +132,7 @@ export default async function StoryLevel({
     // =========================================
 
     const response = await fetch(
-        `http://localhost:3001/messages/${chapterNumber}/${levelNumber}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/messages/${chapterNumber}/${levelNumber}`,
         {
             cache: "no-store",
         }

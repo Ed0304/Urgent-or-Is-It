@@ -287,7 +287,7 @@ export default function Register() {
                                 setPasswordError("");
 
                                 const response = await fetch(
-                                    "http://localhost:3001/auth/register",
+                                    `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
                                     {
                                         method: "POST",
                                         headers: {

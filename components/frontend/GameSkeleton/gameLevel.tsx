@@ -90,7 +90,7 @@ export default function GameLevel({
         try {
 
             const response = await fetch(
-                `http://localhost:3001/users/story-progress/${levelId}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/users/story-progress/${levelId}`,
                 {
                     method: "POST",
                     headers: {

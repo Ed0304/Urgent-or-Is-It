@@ -61,7 +61,7 @@ export default function ChapterLevelSelect({
             try {
 
                 const response = await fetch(
-                    "http://localhost:3001/auth/profile",
+                    `${process.env.NEXT_PUBLIC_API_URL}/auth/profile`,
                     {
                         method: "GET",
                         headers: {
@@ -77,6 +77,9 @@ export default function ChapterLevelSelect({
                 }
 
                 const data = await response.json();
+
+                
+
 
                 setCompletedLevels(
                     data.storyLevelsCompleted ?? []

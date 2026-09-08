@@ -16,7 +16,7 @@ export async function changePassword(
     newPassword: string
 ) {
     const response = await fetch(
-        "http://localhost:3001/auth/password",
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/password`,
         {
             method: "PATCH",
             headers: {
