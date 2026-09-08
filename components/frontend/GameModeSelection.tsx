@@ -5,7 +5,9 @@ import BackButton from "./buttons/backButton";
 
 export default function GameModeSelection() {
     return (
+        
         <main className="min-h-screen px-6 py-16 text-white">
+            <BackButton/>
             <div className="mx-auto max-w-4xl">
 
                 {/* Header */}
@@ -90,7 +92,6 @@ export default function GameModeSelection() {
                             </div>
                         </div>
                     </div>
-                    <BackButton/>
                 </div>
             </div>
         </main>
