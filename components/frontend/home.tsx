@@ -79,6 +79,15 @@ export default function Home() {
                             Ready to continue your investigation?
                         </p>
 
+                        <p className="
+                            mt-4
+                            text-lg
+                            text-slate-400
+                            md:text-xl
+                        ">
+                            For first-time players: Take your time to read the lore and how to play instructions.
+                        </p>
+
                     </div>
 
 
