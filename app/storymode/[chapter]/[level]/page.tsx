@@ -331,6 +331,7 @@ export default async function StoryLevel({
                                     messages={messages}
                                     levelId={messages[0]?.level_id}
                                     chapter={chapterNumber}
+                                    finalmessage={levelData.finalmessage}
                                 />
 
                             </LevelIntro>

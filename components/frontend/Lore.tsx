@@ -332,8 +332,11 @@ function LoreModal({
                             src={lore.imageUrl}
                             alt={lore.name}
                             className="
-                                w-full
-                                object-cover
+                                mx-auto
+                                max-h-80
+                                max-w-sm
+                                rounded-lg
+                                object-contain
                             "
                         />
 

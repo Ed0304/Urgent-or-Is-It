@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AuthGuard from "../AuthGuard";
+
 interface Message {
     sender: string;
     subject?: string;
@@ -13,33 +14,43 @@ interface Message {
     messageType: "Email" | "sms";
     legit: boolean;
     linkText?: string;
-    linkUrl?:string;
+    linkUrl?: string;
+}
+
+interface TextPart {
+    text: string;
+    bold?: boolean;
+    italic?: boolean;
 }
 
 export default function GameLevel({
     messages,
     levelId,
     chapter,
+    finalmessage,
 }: {
     messages: Message[];
     levelId?: number;
     chapter?: number;
+    finalmessage?: TextPart[];
 }) {
-
     const router = useRouter();
 
     const [currentMessage, setCurrentMessage] = useState(0);
-
     const [selectedAnswer, setSelectedAnswer] =
         useState<"phish" | "legit" | null>(null);
 
     const [correctAnswers, setCorrectAnswers] = useState(0);
 
-    const [levelFinished, setLevelFinished] = useState(false);
+    const [levelFinished, setLevelFinished] =
+        useState(false);
 
-    const [finishing, setFinishing] = useState(false);
+    const [showFinalMessage, setShowFinalMessage] =
+        useState(false);
 
-    console.log(messages)
+    const [finishing, setFinishing] =
+        useState(false);
+
 
     // =========================================
     // CURRENT MESSAGE
@@ -54,8 +65,13 @@ export default function GameLevel({
 
     async function finishLevel() {
 
-        if (levelId === undefined || chapter === undefined) {
-            console.error("Missing levelId or chapter");
+        if (
+            levelId === undefined ||
+            chapter === undefined
+        ) {
+            console.error(
+                "Missing levelId or chapter"
+            );
             return;
         }
 
@@ -63,7 +79,9 @@ export default function GameLevel({
             localStorage.getItem("access_token");
 
         if (!token) {
-            console.error("No access token found");
+            console.error(
+                "No access token found"
+            );
             return;
         }
 
@@ -76,13 +94,17 @@ export default function GameLevel({
                 {
                     method: "POST",
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization:
+                            `Bearer ${token}`,
                     },
                 }
             );
 
             if (!response.ok) {
-                console.error("Failed to complete level");
+                console.error(
+                    "Failed to complete level"
+                );
+
                 setFinishing(false);
                 return;
             }
@@ -109,113 +131,286 @@ export default function GameLevel({
 
     if (levelFinished) {
 
-        const percentage = Math.round(
-            (correctAnswers / messages.length) * 100
-        );
+        const percentage =
+            Math.round(
+                (correctAnswers /
+                    messages.length) * 100
+            );
 
-        const feedback = getFeedback(
-            correctAnswers,
-            messages.length
-        );
+        const feedback =
+            getFeedback(
+                correctAnswers,
+                messages.length
+            );
 
+
+        // =====================================
+        // FINAL MESSAGE / DEMO DISCLAIMER
+        // =====================================
+
+        if (showFinalMessage) {
+
+            return (
+                <AuthGuard>
+
+                    <section className="
+                        rounded-2xl
+                        border
+                        border-sky-900/60
+                        bg-slate-950/90
+                        p-8
+                        shadow-[0_0_40px_rgba(56,189,248,0.06)]
+                        md:p-10
+                    ">
+
+                        {/* SYSTEM LABEL */}
+
+                        <p className="
+                            text-xs
+                            font-bold
+                            uppercase
+                            tracking-[0.3em]
+                            text-sky-500
+                        ">
+                            STEP BACK // TRANSMISSION
+                        </p>
+
+
+                        {/* FINAL MESSAGE */}
+
+                        <div className="
+                            mt-8
+                            space-y-5
+                            text-center
+                        ">
+
+                            {finalmessage?.map(
+                                (part, index) => (
+
+                                    <p
+                                        key={index}
+                                        className={`
+                                            leading-relaxed
+                                            text-zinc-300
+                                            ${part.bold
+                                                ? "font-bold text-slate-100"
+                                                : ""
+                                            }
+                                            ${part.italic
+                                                ? "italic"
+                                                : ""
+                                            }
+                                        `}
+                                    >
+                                        {part.text}
+                                    </p>
+
+                                )
+                            )}
+
+                        </div>
+
+
+                        {/* DEMO DISCLAIMER */}
+
+                        <div className="
+                            mt-10
+                            rounded-xl
+                            border
+                            border-slate-800
+                            bg-black/40
+                            p-5
+                            text-left
+                        ">
+
+                            <p className="
+                                font-mono
+                                text-xs
+                                font-bold
+                                uppercase
+                                tracking-[0.2em]
+                                text-slate-500
+                            ">
+                                Demo Notice
+                            </p>
+
+                            <p className="
+                                mt-3
+                                text-sm
+                                leading-relaxed
+                                text-slate-500
+                            ">
+                                You have reached the end of the
+                                currently available story content.
+                                This version of Urgent or Is It?
+                                is a demo, and additional chapters
+                                and levels will be added in a future
+                                version.
+                            </p>
+
+                        </div>
+
+
+                        {/* FINISH */}
+
+                        <button
+                            type="button"
+                            onClick={finishLevel}
+                            disabled={finishing}
+                            className="
+                                mt-8
+                                w-full
+                                rounded-xl
+                                border
+                                border-sky-500
+                                bg-sky-500
+                                px-6
+                                py-3
+                                font-bold
+                                text-slate-950
+                                transition
+                                hover:bg-sky-400
+                                hover:border-sky-400
+                                disabled:cursor-not-allowed
+                                disabled:opacity-50
+                            "
+                        >
+                            {finishing
+                                ? "Saving..."
+                                : "Return to Chapter Select"
+                            }
+                        </button>
+
+                    </section>
+
+                </AuthGuard>
+            );
+        }
+
+
+        // =====================================
+        // NORMAL RESULTS SCREEN
+        // =====================================
 
         return (
             <AuthGuard>
-            <section className="
-                rounded-2xl
-                border-2
-                border-zinc-800
-                bg-zinc-900
-                p-8
-                text-center
-            ">
 
-                <p className="
-                    text-sm
-                    font-bold
-                    uppercase
-                    tracking-[0.3em]
-                    text-sky-500
+                <section className="
+                    rounded-2xl
+                    border
+                    border-sky-900/60
+                    bg-slate-950/90
+                    p-8
+                    text-center
+                    shadow-[0_0_40px_rgba(56,189,248,0.06)]
+                    md:p-10
                 ">
-                    Level Complete
-                </p>
 
+                    {/* HEADER */}
 
-                {/* SCORE */}
-
-                <h2 className="
-                    mt-6
-                    text-6xl
-                    font-extrabold
-                    text-sky-400
-                    drop-shadow-[0_0_15px_rgba(56,189,248,0.25)]
-                ">
-                    {percentage}%
-                </h2>
-
-
-                {/* FEEDBACK TITLE */}
-
-                <h3 className="
-                    mt-4
-                    text-3xl
-                    font-bold
-                ">
-                    {feedback.title}
-                </h3>
-
-
-                {/* FEEDBACK MESSAGE */}
-
-                <p className="
-                    mx-auto
-                    mt-4
-                    max-w-xl
-                    leading-relaxed
-                    text-zinc-400
-                ">
-                    {feedback.message}
-                </p>
-
-
-                {/* SCORE BREAKDOWN */}
-
-                <p className="
-                    mt-6
-                    text-sky-500
-                ">
-                    {correctAnswers} / {messages.length} correct
-                </p>
-
-
-                {/* FINISH */}
-
-                <button
-                    type="button"
-                    onClick={finishLevel}
-                    disabled={finishing}
-                    className="
-                        mt-8
-                        rounded-xl
-                        bg-sky-500
-                        text-slate-950
-                        hover:bg-sky-400
-                        px-8
-                        py-3
+                    <p className="
+                        text-xs
                         font-bold
-                        text-black
-                        transition
-                        disabled:cursor-not-allowed
-                        disabled:opacity-50
-                    "
-                >
-                    {finishing
-                        ? "Saving..."
-                        : "Finish Level"
-                    }
-                </button>
+                        uppercase
+                        tracking-[0.3em]
+                        text-sky-500
+                    ">
+                        Level Complete
+                    </p>
 
-            </section>
+
+                    {/* SCORE */}
+
+                    <h2 className="
+                        mt-6
+                        text-6xl
+                        font-extrabold
+                        text-sky-400
+                        drop-shadow-[0_0_15px_rgba(56,189,248,0.25)]
+                    ">
+                        {percentage}%
+                    </h2>
+
+
+                    {/* FEEDBACK */}
+
+                    <h3 className="
+                        mt-4
+                        text-3xl
+                        font-bold
+                    ">
+                        {feedback.title}
+                    </h3>
+
+
+                    <p className="
+                        mx-auto
+                        mt-4
+                        max-w-xl
+                        leading-relaxed
+                        text-zinc-400
+                    ">
+                        {feedback.message}
+                    </p>
+
+
+                    {/* SCORE BREAKDOWN */}
+
+                    <p className="
+                        mt-6
+                        font-mono
+                        text-sm
+                        text-sky-500
+                    ">
+                        {correctAnswers} / {messages.length} correct
+                    </p>
+
+
+                    {/* CONTINUE */}
+
+                    <button
+                        type="button"
+                        onClick={() => {
+
+                            if (
+                                finalmessage &&
+                                finalmessage.length > 0
+                            ) {
+                                setShowFinalMessage(true);
+                            } else {
+                                finishLevel();
+                            }
+
+                        }}
+                        disabled={finishing}
+                        className="
+                            mt-8
+                            rounded-xl
+                            border
+                            border-sky-500
+                            bg-sky-500
+                            px-8
+                            py-3
+                            font-bold
+                            text-slate-950
+                            transition
+                            hover:border-sky-400
+                            hover:bg-sky-400
+                            disabled:cursor-not-allowed
+                            disabled:opacity-50
+                        "
+                    >
+                        {finalmessage &&
+                        finalmessage.length > 0
+                            ? "Continue"
+                            : finishing
+                                ? "Saving..."
+                                : "Finish Level"
+                        }
+                    </button>
+
+                </section>
+
             </AuthGuard>
         );
     }
@@ -247,10 +442,9 @@ export default function GameLevel({
 
         setSelectedAnswer(choice);
 
-
         const correct =
-            (choice === "legit") === message.legit;
-
+            (choice === "legit") ===
+            message.legit;
 
         if (correct) {
 
@@ -302,183 +496,184 @@ export default function GameLevel({
 
     return (
         <AuthGuard>
-        <section className="
-                    space-y-6
-                    relative">
 
-
-            {/* =================================
-                PROGRESS
-               ================================= */}
-
-            <div className="
-                font-mono
-                text-sm
-                tracking-wider
-                text-sky-400
+            <section className="
+                relative
+                space-y-6
             ">
 
-                Message {currentMessage + 1}
-                {" / "}
-                {messages.length}
-
-            </div>
-
-
-            {/* =================================
-                MESSAGE
-               ================================= */}
-
-            {message.messageType === "Email" ? (
-
-                <EmailMessage
-                    message={message}
-                />
-
-            ) : (
-
-                <SMSMessage
-                    message={message}
-                />
-
-            )}
-
-
-            {/* =================================
-                ANSWER BUTTONS
-               ================================= */}
-
-            <div className="
-                flex
-                gap-4
-            ">
-
-                <button
-                    type="button"
-                    onClick={() => answer("phish")}
-                    disabled={selectedAnswer !== null}
-                    className="
-                        flex-1
-                        rounded-xl
-                        border
-                        border-red-900/70
-                        bg-red-950/20
-                        px-8
-                        py-4
-                        font-bold
-                        tracking-wider
-                        text-red-400
-                        transition
-                        hover:border-red-500
-                        hover:bg-red-950/40
-                        disabled:cursor-not-allowed
-                        disabled:opacity-50
-                    "
-                >
-                    PHISH
-                </button>
-
-
-                <button
-                    type="button"
-                    onClick={() => answer("legit")}
-                    disabled={selectedAnswer !== null}
-                    className="
-                        flex-1
-                        rounded-xl
-                        border
-                        border-emerald-900/70
-                        bg-emerald-950/20
-                        px-8
-                        py-4
-                        font-bold
-                        tracking-wider
-                        text-emerald-400
-                        transition
-                        hover:border-emerald-500
-                        hover:bg-emerald-950/40
-                        disabled:cursor-not-allowed
-                        disabled:opacity-50
-                    "
-                >
-                    LEGIT
-                </button>
-
-            </div>
-
-
-            {/* =================================
-                FEEDBACK
-               ================================= */}
-
-            {selectedAnswer !== null && (
+                {/* PROGRESS */}
 
                 <div className="
-                    rounded-xl
-                    border
-                    border-sky-900/60
-                    bg-slate-950
-                    shadow-[0_0_40px_rgba(56,189,248,0.06)]
-                    p-6
+                    font-mono
+                    text-sm
+                    tracking-wider
+                    text-sky-400
+                ">
+                    Message {currentMessage + 1}
+                    {" / "}
+                    {messages.length}
+                </div>
+
+
+                {/* MESSAGE */}
+
+                {message.messageType === "Email" ? (
+
+                    <EmailMessage
+                        message={message}
+                    />
+
+                ) : (
+
+                    <SMSMessage
+                        message={message}
+                    />
+
+                )}
+
+
+                {/* ANSWER BUTTONS */}
+
+                <div className="
+                    flex
+                    gap-4
                 ">
 
-                    <h3 className="
-                        text-xl
-                        font-bold
-                    ">
-                        {isCorrect
-                            ? "Correct!"
-                            : "Incorrect!"
+                    <button
+                        type="button"
+                        onClick={() =>
+                            answer("phish")
                         }
-                    </h3>
-
-
-                    <p className="
-                        mt-2
-                        text-zinc-400
-                    ">
-
-                        This message was actually{" "}
-
-                        <span className="
+                        disabled={
+                            selectedAnswer !== null
+                        }
+                        className="
+                            flex-1
+                            rounded-xl
+                            border
+                            border-red-900/70
+                            bg-red-950/20
+                            px-8
+                            py-4
                             font-bold
-                            text-white
-                        ">
-                            {message.legit
-                                ? "LEGIT"
-                                : "PHISH"
-                            }
-                        </span>.
-
-                    </p>
+                            tracking-wider
+                            text-red-400
+                            transition
+                            hover:border-red-500
+                            hover:bg-red-950/40
+                            disabled:cursor-not-allowed
+                            disabled:opacity-50
+                        "
+                    >
+                        PHISH
+                    </button>
 
 
                     <button
                         type="button"
-                        onClick={nextMessage}
+                        onClick={() =>
+                            answer("legit")
+                        }
+                        disabled={
+                            selectedAnswer !== null
+                        }
                         className="
-                            mt-5
+                            flex-1
                             rounded-xl
-                            bg-sky-500
-                            text-slate-950
-                            hover:bg-sky-400
-                            px-6
-                            py-3
+                            border
+                            border-emerald-900/70
+                            bg-emerald-950/20
+                            px-8
+                            py-4
                             font-bold
+                            tracking-wider
+                            text-emerald-400
                             transition
+                            hover:border-emerald-500
+                            hover:bg-emerald-950/40
+                            disabled:cursor-not-allowed
+                            disabled:opacity-50
                         "
                     >
-                        {currentMessage === messages.length - 1
-                            ? "View Results"
-                            : "Next"
-                        }
+                        LEGIT
                     </button>
 
                 </div>
 
-            )}
 
-        </section>
+                {/* FEEDBACK */}
+
+                {selectedAnswer !== null && (
+
+                    <div className="
+                        rounded-xl
+                        border
+                        border-sky-900/60
+                        bg-slate-950
+                        p-6
+                        shadow-[0_0_40px_rgba(56,189,248,0.06)]
+                    ">
+
+                        <h3 className="
+                            text-xl
+                            font-bold
+                        ">
+                            {isCorrect
+                                ? "Correct!"
+                                : "Incorrect!"
+                            }
+                        </h3>
+
+
+                        <p className="
+                            mt-2
+                            text-zinc-400
+                        ">
+                            This message was actually{" "}
+
+                            <span className="
+                                font-bold
+                                text-white
+                            ">
+                                {message.legit
+                                    ? "LEGIT"
+                                    : "PHISH"
+                                }
+                            </span>.
+                        </p>
+
+
+                        <button
+                            type="button"
+                            onClick={nextMessage}
+                            className="
+                                mt-5
+                                rounded-xl
+                                border
+                                border-sky-500
+                                bg-sky-500
+                                px-6
+                                py-3
+                                font-bold
+                                text-slate-950
+                                transition
+                                hover:bg-sky-400
+                            "
+                        >
+                            {currentMessage ===
+                            messages.length - 1
+                                ? "View Results"
+                                : "Next"
+                            }
+                        </button>
+
+                    </div>
+
+                )}
+
+            </section>
+
         </AuthGuard>
     );
 }
@@ -496,17 +691,15 @@ function getFeedback(
     const percentage =
         (correct / total) * 100;
 
-
     if (percentage === 100) {
 
         return {
             title: "Perfect!",
             message:
-                "You handled those emails well.",
+                "You handled those messages well.",
         };
 
     }
-
 
     if (percentage >= 90) {
 
@@ -518,7 +711,6 @@ function getFeedback(
 
     }
 
-
     if (percentage >= 70) {
 
         return {
@@ -528,7 +720,6 @@ function getFeedback(
         };
 
     }
-
 
     if (percentage >= 50) {
 
@@ -540,7 +731,6 @@ function getFeedback(
         };
 
     }
-
 
     return {
         title: "Keep practicing!",
@@ -561,6 +751,7 @@ function EmailMessage({
 }) {
 
     return (
+
         <article className="
             rounded-2xl
             border
@@ -629,31 +820,39 @@ function EmailMessage({
                 {message.message}
             </div>
 
-                {message.linkText && message.linkUrl && (
-            <div className="relative mt-8 group">
 
-                <button
-                    type="button"
-                    className="
-                        rounded-xl
-                        border-2
-                        border-sky-900/70
-                        bg-slate-950
-                        text-sky-400
-                        hover:border-sky-500
-                        hover:bg-sky-950/40
-                        px-6
-                        py-3
-                        font-bold
-                        transition
-                    "
-                >
-                    {message.linkText}
-                </button>
+            {message.linkText &&
+             message.linkUrl && (
 
-                {/* URL shown on hover */}
-                <div
-                    className="
+                <div className="
+                    group
+                    relative
+                    mt-8
+                ">
+
+                    <button
+                        type="button"
+                        className="
+                            rounded-xl
+                            border
+                            border-sky-900/70
+                            bg-slate-950
+                            px-6
+                            py-3
+                            font-bold
+                            text-sky-400
+                            transition
+                            hover:border-sky-500
+                            hover:bg-sky-950/40
+                        "
+                    >
+                        {message.linkText}
+                    </button>
+
+
+                    {/* URL */}
+
+                    <div className="
                         pointer-events-none
                         absolute
                         bottom-full
@@ -665,20 +864,20 @@ function EmailMessage({
                         border
                         border-sky-900
                         bg-slate-950
-                        text-sky-300
-                        font-mono
                         px-4
                         py-2
+                        font-mono
                         text-sm
+                        text-sky-300
                         shadow-xl
                         group-hover:block
-                    "
-                >
-                    {message.linkUrl}
+                    ">
+                        {message.linkUrl}
+                    </div>
+
                 </div>
 
-    </div>
-)}
+            )}
 
         </article>
     );

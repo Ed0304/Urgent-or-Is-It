@@ -13,8 +13,9 @@ export interface Level {
     order: number;
     title: string;
     description: string;
-    blurb?: TextPart[];
+    blurb?: TextPart[]; //The text displayed before the player goes to the tutorial dialogue/real level
     tutorial?: TutorialDialogue[];
+    finalmessage?: TextPart[]; //Displays a note to tell players that they have reached the end of the game (DEMO version)
 }
 
 export interface TextPart {
@@ -172,6 +173,34 @@ export const chapterLevels: Record<number, Level[]> = {
                 { text: " 'Alright, it seems you get the basics now.' "},
                 { text: " 'Now, it's time to apply those skills to the test.' "},
                 { text: " -Geofrey Boon, founder of STEP BACK. ", bold: true },
+            ],
+            finalmessage: [
+                {
+                    text: "Congratulations, rookie. You completed your first investigation.",
+                    bold: true,
+                },
+                {
+                    text: "You learned how to slow down, inspect the details, and question what a message is asking you to do. Those small decisions can make the difference between spotting a threat and becoming its next victim.",
+                },
+                {
+                    text: "But your journey with STEP BACK doesn't end here. Deceivious is still out there, and Futurepura still needs people willing to look twice when something doesn't feel right.",
+                },
+                {
+                    text: "Welcome to STEP BACK.",
+                    bold: true,
+                    italic: true,
+                },
+                {
+                    text: "— END OF CURRENT STORY —",
+                    bold: true,
+                },
+                {
+                    text: "DEMO DISCLAIMER",
+                    bold: true,
+                },
+                {
+                    text: "You have reached the end of the currently available story content. Urgent or Is It? is currently a demonstration version, and additional chapters and features may be added in future updates.",
+                },
             ]
         }
 
