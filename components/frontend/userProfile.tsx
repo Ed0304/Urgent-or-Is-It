@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import ChangeEmailModal from "../modals/changeEmail"
 import ChangePasswordModal from "../modals/changePassword"
+import AuthGuard from "./AuthGuard"
 export default function UserProfile(){
     const {user} = useAuth()
     const router = useRouter()
@@ -13,6 +14,7 @@ export default function UserProfile(){
 
 
     return (<>
+    <AuthGuard>
     <main className="min-h-screen px-6 py-16">
         <h1 className=" text-center text-5xl font-extrabold tracking-tight md:text-6xl ">
             User Settings 
@@ -131,7 +133,7 @@ export default function UserProfile(){
         {changePasswordModalOpen && <ChangePasswordModal onClose={()=>setChangePasswordModalOpen(false)}/>}
         
     </main>
-    
+    </AuthGuard>
     
     </>)
 }

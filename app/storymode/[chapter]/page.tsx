@@ -1,5 +1,6 @@
 "use client";
 
+import AuthGuard from "@/components/frontend/AuthGuard";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import LevelSelectionBox from "@/components/frontend/GameSkeleton/levelselectionbox";
@@ -107,30 +108,77 @@ export default function ChapterLevelSelect({
     if (!chapterData) {
 
         return (
-            <main className="
-                min-h-screen
-                bg-black
-                px-6
-                py-12
-                text-white
-            ">
-
-                <div className="
-                    mx-auto
-                    max-w-4xl
-                    text-center
+            <AuthGuard>
+                <main className="
+                    min-h-screen
+                    bg-slate-950
+                    px-6
+                    py-16
+                    text-slate-100
                 ">
 
-                    <h1 className="
-                        text-4xl
-                        font-extrabold
+                    <div className="
+                        mx-auto
+                        flex
+                        min-h-[60vh]
+                        max-w-4xl
+                        items-center
+                        justify-center
+                        text-center
                     ">
-                        Chapter Not Found
-                    </h1>
 
-                </div>
+                        <div className="
+                            w-full
+                            rounded-2xl
+                            border
+                            border-red-900/60
+                            bg-slate-900/80
+                            p-10
+                            shadow-[0_0_35px_rgba(248,113,113,0.05)]
+                        ">
 
-            </main>
+                            <p className="
+                                font-mono
+                                text-xs
+                                font-bold
+                                uppercase
+                                tracking-[0.3em]
+                                text-red-500
+                            ">
+                                ERROR // 404
+                            </p>
+
+                            <h1 className="
+                                mt-4
+                                text-4xl
+                                font-extrabold
+                                md:text-5xl
+                            ">
+                                Chapter Not Found
+                            </h1>
+
+                            <p className="
+                                mt-4
+                                text-slate-400
+                            ">
+                                The requested investigation could not
+                                be located.
+                            </p>
+
+                            <div className="
+                                mt-8
+                                flex
+                                justify-center
+                            ">
+                                <BackButton />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </main>
+            </AuthGuard>
         );
     }
 
@@ -140,131 +188,266 @@ export default function ChapterLevelSelect({
     // =========================================
 
     return (
-        <main className="
-            min-h-screen
-            bg-black
-            px-6
-            py-12
-            text-white
-        ">
+        <AuthGuard>
 
-            <div className="
-                mx-auto
-                max-w-6xl
+            <main className="
+                min-h-screen
+                bg-slate-950
+                px-6
+                py-12
+                text-slate-100
             ">
 
-                {/* HEADER */}
-
-                <section className="
-                    py-10
-                    text-center
+                <div className="
+                    mx-auto
+                    max-w-6xl
                 ">
 
-                    <p className="
-                        text-sm
-                        font-bold
-                        uppercase
-                        tracking-[0.3em]
-                        text-zinc-500
-                    ">
+                    {/* =========================================
+                        HEADER
+                       ========================================= */}
 
-                        {chapterNumber === 0
-                            ? "Prologue"
-                            : `Chapter ${chapterNumber}`}
-
-                    </p>
-
-
-                    <h1 className="
-                        mt-3
-                        text-4xl
-                        font-extrabold
-                        md:text-6xl
-                    ">
-                        {chapterData.title}
-                    </h1>
-
-
-                    <p className="
-                        mt-4
-                        text-zinc-400
-                    ">
-                        Select a level to continue.
-                    </p>
-
-                </section>
-
-
-                {/* LEVEL SELECT */}
-
-                {levels.length > 0 ? (
-
-                    <div className="
-                        flex
-                        gap-6
-                        overflow-x-auto
-                        pb-6
-                    ">
-
-                        {levels.map((level) => {
-
-                            const completed =
-                                completedLevels.includes(level.level_id);
-
-                            const previousLevel =
-                                levels.find(
-                                    (previous) =>
-                                        previous.order === level.order - 1
-                                );
-
-                            const locked =
-                                level.order > 1 &&
-                                previousLevel !== undefined &&
-                                !completedLevels.includes(previousLevel.level_id);
-
-
-                            return (
-                                <LevelSelectionBox
-                                    key={level.order}
-                                    chapter={chapterNumber}
-                                    level={level}
-                                    completed={completed}
-                                    locked={locked}
-                                    loading={loading}
-                                />
-                            );
-
-                        })}
-
-                    </div>
-
-                ) : (
-
-                    <div className="
-                        rounded-2xl
-                        border-2
-                        border-zinc-800
-                        bg-zinc-900
-                        p-10
+                    <section className="
+                        py-10
                         text-center
                     ">
 
-                        <h2 className="
-                            text-2xl
+                        <p className="
+                            font-mono
+                            text-xs
                             font-bold
+                            uppercase
+                            tracking-[0.3em]
+                            text-sky-500
                         ">
-                            Coming Soon
-                        </h2>
 
+                            {chapterNumber === 0
+                                ? "STEP BACK // PROLOGUE"
+                                : `STEP BACK // CHAPTER ${chapterNumber}`}
+
+                        </p>
+
+
+                        <h1 className="
+                            mt-4
+                            text-4xl
+                            font-extrabold
+                            tracking-tight
+                            text-slate-100
+                            md:text-6xl
+                        ">
+                            {chapterData.title}
+                        </h1>
+
+
+                        <p className="
+                            mx-auto
+                            mt-4
+                            max-w-xl
+                            text-slate-400
+                        ">
+                            Select an investigation to continue.
+                        </p>
+
+                    </section>
+
+
+                    {/* =========================================
+                        LEVEL SELECT
+                       ========================================= */}
+
+                    {levels.length > 0 ? (
+
+                        <section className="
+                            rounded-3xl
+                            border
+                            border-sky-900/50
+                            bg-slate-900/50
+                            p-6
+                            shadow-[0_0_40px_rgba(56,189,248,0.04)]
+                            md:p-8
+                        ">
+
+                            {/* Section header */}
+
+                            <div className="
+                                mb-6
+                                flex
+                                items-center
+                                justify-between
+                                gap-4
+                                border-b
+                                border-slate-800
+                                pb-5
+                            ">
+
+                                <div>
+
+                                    <p className="
+                                        font-mono
+                                        text-xs
+                                        font-bold
+                                        uppercase
+                                        tracking-[0.2em]
+                                        text-slate-600
+                                    ">
+                                        Available Investigations
+                                    </p>
+
+                                    <p className="
+                                        mt-1
+                                        text-sm
+                                        text-slate-500
+                                    ">
+                                        {levels.length} level
+                                        {levels.length !== 1 ? "s" : ""}
+                                    </p>
+
+                                </div>
+
+
+                                <div className="
+                                    hidden
+                                    rounded-lg
+                                    border
+                                    border-slate-800
+                                    bg-slate-950
+                                    px-3
+                                    py-2
+                                    font-mono
+                                    text-xs
+                                    text-slate-500
+                                    sm:block
+                                ">
+                                    CASE // {chapterNumber.toString().padStart(2, "0")}
+                                </div>
+
+                            </div>
+
+
+                            {/* Level carousel */}
+
+                            <div className="
+                                flex
+                                gap-6
+                                overflow-x-auto
+                                pb-4
+                                pt-2
+                                snap-x
+                                snap-mandatory
+                                scrollbar-thin
+                                scrollbar-track-transparent
+                                scrollbar-thumb-slate-700
+                            ">
+
+                                {levels.map((level) => {
+
+                                    const completed =
+                                        completedLevels.includes(
+                                            level.level_id
+                                        );
+
+                                    const previousLevel =
+                                        levels.find(
+                                            (previous) =>
+                                                previous.order ===
+                                                level.order - 1
+                                        );
+
+                                    const locked =
+                                        level.order > 1 &&
+                                        previousLevel !== undefined &&
+                                        !completedLevels.includes(
+                                            previousLevel.level_id
+                                        );
+
+
+                                    return (
+                                        <div
+                                            key={level.order}
+                                            className="
+                                                snap-start
+                                            "
+                                        >
+
+                                            <LevelSelectionBox
+                                                chapter={chapterNumber}
+                                                level={level}
+                                                completed={completed}
+                                                locked={locked}
+                                                loading={loading}
+                                            />
+
+                                        </div>
+                                    );
+
+                                })}
+
+                            </div>
+
+                        </section>
+
+                    ) : (
+
+                        <div className="
+                            rounded-2xl
+                            border
+                            border-slate-800
+                            bg-slate-900/70
+                            p-12
+                            text-center
+                        ">
+
+                            <p className="
+                                font-mono
+                                text-xs
+                                font-bold
+                                uppercase
+                                tracking-[0.3em]
+                                text-slate-600
+                            ">
+                                STATUS // UNAVAILABLE
+                            </p>
+
+                            <h2 className="
+                                mt-4
+                                text-2xl
+                                font-bold
+                                text-slate-200
+                            ">
+                                Coming Soon
+                            </h2>
+
+                            <p className="
+                                mt-3
+                                text-slate-500
+                            ">
+                                More investigations will be available
+                                in a future update.
+                            </p>
+
+                        </div>
+
+                    )}
+
+
+                    {/* =========================================
+                        BACK
+                       ========================================= */}
+
+                    <div className="
+                        mt-10
+                        flex
+                        justify-center
+                    ">
+                        <BackButton />
                     </div>
 
-                )}
 
+                </div>
 
-                <BackButton />
+            </main>
 
-            </div>
-
-        </main>
+        </AuthGuard>
     );
 }

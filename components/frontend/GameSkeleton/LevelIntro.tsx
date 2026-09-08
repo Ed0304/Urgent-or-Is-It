@@ -68,14 +68,21 @@ export default function LevelIntro({
 
 
         return (
-            <section className="space-y-8">
+            <section className="
+                space-y-8
+            ">
+
+                {/* =========================================
+                    TUTORIAL CONVERSATION
+                    ========================================= */}
 
                 <div className="
                     rounded-2xl
-                    border-2
-                    border-zinc-800
-                    bg-zinc-950
+                    border
+                    border-sky-900/60
+                    bg-slate-950/90
                     p-6
+                    shadow-[0_0_35px_rgba(56,189,248,0.05)]
                     md:p-8
                 ">
 
@@ -110,17 +117,20 @@ export default function LevelIntro({
 
                             <div className="max-w-[80%]">
 
+                                {/* SPEAKER */}
+
                                 <p className={`
                                     mb-2
                                     px-2
+                                    font-mono
                                     text-xs
                                     font-bold
                                     uppercase
                                     tracking-[0.2em]
-                                    text-zinc-500
+                                    text-sky-500
                                     ${
                                         dialogue.speaker === "You"
-                                            ? "text-right"
+                                            ? "text-right text-slate-500"
                                             : ""
                                     }
                                 `}>
@@ -128,27 +138,30 @@ export default function LevelIntro({
                                 </p>
 
 
+                                {/* DIALOGUE BUBBLE */}
+
                                 <div className={`
                                     rounded-2xl
-                                    border-2
+                                    border
                                     px-6
                                     py-4
+                                    shadow-[0_0_20px_rgba(0,0,0,0.15)]
                                     ${
                                         dialogue.speaker === "You"
                                             ? `
-                                                border-zinc-700
-                                                bg-zinc-800
+                                                border-slate-700
+                                                bg-slate-800/80
                                             `
                                             : `
-                                                border-zinc-800
-                                                bg-zinc-900
+                                                border-sky-900/60
+                                                bg-sky-950/20
                                             `
                                     }
                                 `}>
 
                                     <p className="
                                         leading-relaxed
-                                        text-zinc-200
+                                        text-slate-200
                                     ">
                                         {dialogue.text}
                                     </p>
@@ -162,20 +175,29 @@ export default function LevelIntro({
                     </AnimatePresence>
 
 
-                    {/* DIALOGUE CONTROLS */}
+                    {/* =========================================
+                        DIALOGUE CONTROLS
+                        ========================================= */}
 
                     <div className="
                         mt-6
                         flex
                         items-center
                         justify-between
+                        border-t
+                        border-slate-800
+                        pt-5
                     ">
 
                         <p className="
+                            font-mono
                             text-xs
-                            text-zinc-600
+                            tracking-wider
+                            text-slate-600
                         ">
-                            {currentDialogue + 1} / {tutorial.length}
+                            {String(currentDialogue + 1).padStart(2, "0")}
+                            {" / "}
+                            {String(tutorial.length).padStart(2, "0")}
                         </p>
 
 
@@ -184,18 +206,23 @@ export default function LevelIntro({
                             onClick={nextDialogue}
                             className="
                                 rounded-xl
-                                bg-white
+                                border
+                                border-sky-700/70
+                                bg-sky-950/30
                                 px-6
                                 py-3
                                 font-bold
-                                text-black
+                                tracking-wider
+                                text-sky-400
                                 transition
-                                hover:bg-zinc-200
+                                hover:border-sky-400
+                                hover:bg-sky-950/50
+                                hover:text-sky-300
                             "
                         >
                             {lastDialogue
-                                ? "Start Level"
-                                : "Continue"
+                                ? "START LEVEL"
+                                : "CONTINUE"
                             }
                         </button>
 
@@ -204,7 +231,12 @@ export default function LevelIntro({
                 </div>
 
 
-                <div className="flex justify-center">
+                {/* BACK BUTTON */}
+
+                <div className="
+                    flex
+                    justify-center
+                ">
                     <BackButton />
                 </div>
 
@@ -220,24 +252,36 @@ export default function LevelIntro({
     return (
         <section className="
             rounded-2xl
-            border-2
-            border-zinc-800
-            bg-zinc-900
+            border
+            border-sky-900/60
+            bg-slate-950/90
             p-8
+            shadow-[0_0_35px_rgba(56,189,248,0.05)]
         ">
 
+            {/* =========================================
+                BRIEFING HEADER
+                ========================================= */}
+
             <p className="
+                font-mono
                 text-sm
                 font-bold
                 uppercase
                 tracking-[0.3em]
-                text-zinc-500
+                text-sky-500
             ">
-                Briefing
+                STEP BACK // BRIEFING
             </p>
 
 
-            <div className="mt-8">
+            {/* =========================================
+                STORY BLURB
+                ========================================= */}
+
+            <div className="
+                mt-8
+            ">
 
                 {blurb?.map((part, index) => (
 
@@ -246,14 +290,22 @@ export default function LevelIntro({
                         className="
                             mt-4
                             leading-relaxed
-                            text-zinc-300
+                            text-slate-300
                         "
                     >
 
                         <span
                             className={`
-                                ${part.bold ? "font-bold" : ""}
-                                ${part.italic ? "italic" : ""}
+                                ${
+                                    part.bold
+                                        ? "font-bold text-slate-100"
+                                        : ""
+                                }
+                                ${
+                                    part.italic
+                                        ? "italic"
+                                        : ""
+                                }
                             `}
                         >
                             {part.text}
@@ -266,23 +318,31 @@ export default function LevelIntro({
             </div>
 
 
+            {/* =========================================
+                BRIEFING FOOTER
+                ========================================= */}
+
             <div className="
                 mt-10
                 flex
                 items-center
                 justify-between
                 border-t
-                border-zinc-800
+                border-slate-800
                 pt-6
             ">
 
                 <p className="
-                    text-sm
-                    text-zinc-500
+                    font-mono
+                    text-xs
+                    tracking-wider
+                    text-slate-500
                 ">
-                    {messageCount} messages to review
+                    {String(messageCount).padStart(2, "0")} MESSAGES TO REVIEW
                 </p>
 
+
+                {/* NEXT BUTTON */}
 
                 <button
                     type="button"
@@ -297,25 +357,36 @@ export default function LevelIntro({
                     }}
                     className="
                         rounded-xl
-                        bg-white
+                        border
+                        border-sky-700/70
+                        bg-sky-950/30
                         px-8
                         py-3
                         font-bold
-                        text-black
+                        tracking-wider
+                        text-sky-400
                         transition
-                        hover:bg-zinc-200
+                        hover:border-sky-400
+                        hover:bg-sky-950/50
+                        hover:text-sky-300
                     "
                 >
                     {tutorial && tutorial.length > 0
-                        ? "Next"
-                        : "Begin Level"
+                        ? "NEXT"
+                        : "BEGIN LEVEL"
                     }
                 </button>
 
             </div>
 
 
-            <div className="mt-8 flex justify-center">
+            {/* BACK BUTTON */}
+
+            <div className="
+                mt-8
+                flex
+                justify-center
+            ">
                 <BackButton />
             </div>
 

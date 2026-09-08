@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
+import AuthGuard from "../AuthGuard";
 interface Message {
     sender: string;
     subject?: string;
@@ -120,6 +120,7 @@ export default function GameLevel({
 
 
         return (
+            <AuthGuard>
             <section className="
                 rounded-2xl
                 border-2
@@ -134,7 +135,7 @@ export default function GameLevel({
                     font-bold
                     uppercase
                     tracking-[0.3em]
-                    text-zinc-500
+                    text-sky-500
                 ">
                     Level Complete
                 </p>
@@ -146,6 +147,8 @@ export default function GameLevel({
                     mt-6
                     text-6xl
                     font-extrabold
+                    text-sky-400
+                    drop-shadow-[0_0_15px_rgba(56,189,248,0.25)]
                 ">
                     {percentage}%
                 </h2>
@@ -179,7 +182,7 @@ export default function GameLevel({
 
                 <p className="
                     mt-6
-                    text-zinc-500
+                    text-sky-500
                 ">
                     {correctAnswers} / {messages.length} correct
                 </p>
@@ -194,13 +197,14 @@ export default function GameLevel({
                     className="
                         mt-8
                         rounded-xl
-                        bg-white
+                        bg-sky-500
+                        text-slate-950
+                        hover:bg-sky-400
                         px-8
                         py-3
                         font-bold
                         text-black
                         transition
-                        hover:bg-zinc-200
                         disabled:cursor-not-allowed
                         disabled:opacity-50
                     "
@@ -212,6 +216,7 @@ export default function GameLevel({
                 </button>
 
             </section>
+            </AuthGuard>
         );
     }
 
@@ -296,8 +301,10 @@ export default function GameLevel({
     // =========================================
 
     return (
-
-        <section className="space-y-6">
+        <AuthGuard>
+        <section className="
+                    space-y-6
+                    relative">
 
 
             {/* =================================
@@ -305,8 +312,10 @@ export default function GameLevel({
                ================================= */}
 
             <div className="
+                font-mono
                 text-sm
-                text-zinc-500
+                tracking-wider
+                text-sky-400
             ">
 
                 Message {currentMessage + 1}
@@ -351,15 +360,17 @@ export default function GameLevel({
                     className="
                         flex-1
                         rounded-xl
-                        border-2
-                        border-zinc-700
-                        bg-black
+                        border
+                        border-red-900/70
+                        bg-red-950/20
                         px-8
                         py-4
                         font-bold
+                        tracking-wider
+                        text-red-400
                         transition
-                        hover:border-zinc-500
-                        hover:bg-zinc-800
+                        hover:border-red-500
+                        hover:bg-red-950/40
                         disabled:cursor-not-allowed
                         disabled:opacity-50
                     "
@@ -375,15 +386,17 @@ export default function GameLevel({
                     className="
                         flex-1
                         rounded-xl
-                        border-2
-                        border-zinc-700
-                        bg-black
+                        border
+                        border-emerald-900/70
+                        bg-emerald-950/20
                         px-8
                         py-4
                         font-bold
+                        tracking-wider
+                        text-emerald-400
                         transition
-                        hover:border-zinc-500
-                        hover:bg-zinc-800
+                        hover:border-emerald-500
+                        hover:bg-emerald-950/40
                         disabled:cursor-not-allowed
                         disabled:opacity-50
                     "
@@ -402,9 +415,10 @@ export default function GameLevel({
 
                 <div className="
                     rounded-xl
-                    border-2
-                    border-zinc-800
-                    bg-zinc-900
+                    border
+                    border-sky-900/60
+                    bg-slate-950
+                    shadow-[0_0_40px_rgba(56,189,248,0.06)]
                     p-6
                 ">
 
@@ -445,13 +459,13 @@ export default function GameLevel({
                         className="
                             mt-5
                             rounded-xl
-                            bg-white
+                            bg-sky-500
+                            text-slate-950
+                            hover:bg-sky-400
                             px-6
                             py-3
                             font-bold
-                            text-black
                             transition
-                            hover:bg-zinc-200
                         "
                     >
                         {currentMessage === messages.length - 1
@@ -465,6 +479,7 @@ export default function GameLevel({
             )}
 
         </section>
+        </AuthGuard>
     );
 }
 
@@ -546,13 +561,13 @@ function EmailMessage({
 }) {
 
     return (
-
         <article className="
             rounded-2xl
-            border-2
-            border-zinc-800
-            bg-zinc-900
+            border
+            border-sky-900/60
+            bg-slate-950/90
             p-8
+            shadow-[0_0_30px_rgba(56,189,248,0.04)]
         ">
 
             <p className="
@@ -560,7 +575,7 @@ function EmailMessage({
                 font-bold
                 uppercase
                 tracking-[0.2em]
-                text-zinc-500
+                text-sky-500
             ">
                 Email
             </p>
@@ -570,7 +585,7 @@ function EmailMessage({
 
                 <p className="
                     text-sm
-                    text-zinc-500
+                    text-slate-500
                 ">
                     From
                 </p>
@@ -589,7 +604,7 @@ function EmailMessage({
 
                 <p className="
                     text-sm
-                    text-zinc-500
+                    text-slate-500
                 ">
                     Subject
                 </p>
@@ -622,14 +637,15 @@ function EmailMessage({
                     className="
                         rounded-xl
                         border-2
-                        border-zinc-700
-                        bg-black
+                        border-sky-900/70
+                        bg-slate-950
+                        text-sky-400
+                        hover:border-sky-500
+                        hover:bg-sky-950/40
                         px-6
                         py-3
                         font-bold
                         transition
-                        hover:border-zinc-500
-                        hover:bg-zinc-800
                     "
                 >
                     {message.linkText}
@@ -647,12 +663,13 @@ function EmailMessage({
                         max-w-xl
                         rounded-lg
                         border
-                        border-zinc-700
-                        bg-black
+                        border-sky-900
+                        bg-slate-950
+                        text-sky-300
+                        font-mono
                         px-4
                         py-2
                         text-sm
-                        text-zinc-300
                         shadow-xl
                         group-hover:block
                     "
@@ -682,10 +699,11 @@ function SMSMessage({
 
         <article className="
             rounded-2xl
-            border-2
-            border-zinc-800
-            bg-zinc-900
+            border
+            border-sky-900/60
+            bg-slate-950/90
             p-8
+            shadow-[0_0_30px_rgba(56,189,248,0.04)]
         ">
 
             <p className="
@@ -693,7 +711,7 @@ function SMSMessage({
                 font-bold
                 uppercase
                 tracking-[0.2em]
-                text-zinc-500
+                text-sky-500
             ">
                 SMS
             </p>
@@ -703,7 +721,7 @@ function SMSMessage({
 
                 <p className="
                     text-sm
-                    text-zinc-500
+                    text-sky-500
                 ">
                     From
                 </p>

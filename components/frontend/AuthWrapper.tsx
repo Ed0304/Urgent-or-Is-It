@@ -14,11 +14,13 @@ export default function AuthWrapper({children}: AuthWrapperProps){
 
     return (
         <>
+        
         <AuthProvider>
             <Header/>
             {children}
             <Footer/>
         </AuthProvider>
+
         </>
     );
 

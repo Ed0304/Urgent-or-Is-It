@@ -10,8 +10,9 @@ type AuthContextType = {
     user: User | null;
     setUser: (value: User | null) => void;
     logout: () => void;
-    flashMessage: flashMessage | null
-    setFlashMessage: (value:flashMessage | null ) => void
+    flashMessage: flashMessage | null;
+    setFlashMessage: (value:flashMessage | null ) => void;
+    authLoading: boolean;
 };
 
 type User = {
@@ -36,6 +37,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
    const [isLoggedIn, setIsLoggedIn] = useState(false);
    const [flashMessage, setFlashMessage] = useState<flashMessage | null>(null);
    const [user,setUser] = useState<User|null>(null);
+   const [authLoading, setAuthLoading] = useState(true);
    const router = useRouter();
    const logout = () => {
         localStorage.removeItem("access_token");
@@ -49,32 +51,33 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     }
    useEffect(() => {
     async function checkAuth() {
-        const token = localStorage.getItem("access_token")
-        if(!token){
-            return
-        }
-    
-        const profile = await getProfile(token);
+        const token = localStorage.getItem("access_token");
 
-        if (profile.ok) {
-            setUser(profile.data)
-            setIsLoggedIn(true);
-            
-            
-        } else {
-            localStorage.removeItem("access_token");
-            setIsLoggedIn(false);
-            setUser(null);
-        }
-    }
+            if (!token) {
+                setAuthLoading(false);
+                return;
+            }
 
-    checkAuth();
-    
-   },[])
+            const profile = await getProfile(token);
+
+            if (profile.ok) {
+                setUser(profile.data);
+                setIsLoggedIn(true);
+            } else {
+                localStorage.removeItem("access_token");
+                setIsLoggedIn(false);
+                setUser(null);
+            }
+
+            setAuthLoading(false);
+        }
+
+        checkAuth();
+    }, []);
 
    
     return (
-        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user,setUser, logout, flashMessage, setFlashMessage,}}>
+        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user,setUser, logout, flashMessage, setFlashMessage,authLoading}}>
             {children}
         </AuthContext.Provider>
     );
