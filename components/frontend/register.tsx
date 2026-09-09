@@ -673,6 +673,13 @@ export default function Register() {
                                 )}
 
                             </div>
+                            <div className="mt-4 rounded-lg border border-amber-900/50 bg-amber-950/20 p-3">
+                            <p className="text-xs leading-relaxed text-amber-400">
+                                ⚠️ <span className="font-bold">Testing Notice:</span>{" "}
+                                Please use a fictional name and email when testing.
+                                Registration information and game progress are stored in the database.
+                            </p>
+                        </div>
 
 
                             {/* SUBMIT */}
